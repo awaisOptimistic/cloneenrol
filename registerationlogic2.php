@@ -69,14 +69,13 @@ if (isset($_POST['sentOTP'])){
     if ($count!=1) {
         if($role==3){
             /***Insert Query***/
-            $query  = "INSERT INTO `user`(`firstname`, `lastname`, `email`, `password`, `phone`, `courses`, `source`, `campus`, `role`, `referral`, `verified`, `uqid`) VALUES (:firstname, :lastname, :email, :password,:phone, :course,:sources,:campus, :roles, :referred, :verified, :uqid)";
+            $query  = "INSERT INTO `user`(`firstname`, `lastname`, `email`, `password`, `phone`, `source`, `campus`, `role`, `referral`, `verified`, `uqid`) VALUES (:firstname, :lastname, :email, :password,:phone,:sources,:campus, :roles, :referred, :verified, :uqid)";
             $stmt = $pdo->prepare($query);
             $stmt->bindParam('firstname', $FirstName, PDO::PARAM_STR);
             $stmt->bindParam('lastname', $LastName, PDO::PARAM_STR);
             $stmt->bindParam('email', $Email, PDO::PARAM_STR);
             $stmt->bindParam('password', $Password, PDO::PARAM_STR);
             $stmt->bindParam('phone', $phone, PDO::PARAM_STR);
-            $stmt->bindParam('course', $course, PDO::PARAM_STR);
             $stmt->bindParam('sources', $source, PDO::PARAM_STR);
             $stmt->bindParam('campus', $Campus, PDO::PARAM_STR);
             $stmt->bindParam('roles', $role, PDO::PARAM_STR);
@@ -86,6 +85,7 @@ if (isset($_POST['sentOTP'])){
             $stmt->execute();
             echo 'Success: User Added Successfully!';
 
+
             $query2 = "select id from `user` where `email`=:username";
             $stmt2 = $pdo->prepare($query2);
             $stmt2->bindParam('username', $Email, PDO::PARAM_STR);
@@ -94,6 +94,42 @@ if (isset($_POST['sentOTP'])){
             $name = $FirstName . " " . $LastName;
             $userId = $count2['id'];
             $verified=1;
+            /**********************************************************
+             *
+             *
+             *
+             * Code changes start
+             *
+             *
+             *
+             */
+            /***Insert Query***/
+            $queryCourse  = "INSERT INTO `courses`( `userid`, `course`) VALUES (:userid,:course)";
+            $stmtCourse = $pdo->prepare($queryCourse);
+            $stmtCourse->bindParam(':userid', $userId, PDO::PARAM_STR);
+            $stmtCourse->bindParam(':course', $course, PDO::PARAM_STR);
+            $stmtCourse->execute();
+
+            $queryGetCourseId = "select id from `courses` where `userid`=:userid";
+            $stmtGetCourse = $pdo->prepare($queryGetCourseId);
+            $stmtGetCourse->bindParam(':userid', $userId, PDO::PARAM_STR);
+            $stmtGetCourse->execute();
+            $getCourseId = $stmtGetCourse->fetch();
+            $courseId = $getCourseId['id'];
+
+            $updateUserForCourse = "UPDATE user SET courses=? WHERE id=?";
+            $updateUserForCourse= $pdo->prepare($updateUserForCourse);
+            $result = $updateUserForCourse->execute([$courseId,$userId]);
+
+            /**********************************************************
+             *
+             *
+             *
+             * Code changes end
+             *
+             *
+             *
+             ***********************************************************/
 
             $query2 = "Select * from `user` where id=:id";
             $stmt3 = $pdo->prepare($query2);

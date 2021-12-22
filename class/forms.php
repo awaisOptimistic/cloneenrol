@@ -480,7 +480,7 @@ function filterFunction() {
             $stmt->execute();
             $row  = $stmt->fetch(PDO::FETCH_ASSOC);
             // var_dump($row);
-            $courses_ar = explode(',', $row ["courses"]);
+            $courses_ar = explode('a,', $row ["courses"]);
             //echo '<h1>d</h1>';
             //var_dump($courses_ar);
             $different=0;

@@ -2854,6 +2854,39 @@ function StudentDashboard($row2, $security, $found,$different,$userId){
               $('[data-toggle='tooltip']').tooltip();   
             });
           </script>";
+?>
+        <script>
+            /**
+             * Ajax to delete form
+             */
+            $(function(){
+                $(document).on('click','.startanewcourse',function() {
+                         //alert('working');
+                        var val = $("#changeOfCourse").find(":selected").text();
+                        if(val!="Open this select menu"){
+                            // // console.log(del_id);
+                            // $.ajax({
+                            //     type: 'POST',
+                            //     url: 'insertform.php',
+                            //     data: {'del_id': del_id},
+                            //     success: function (data) {
+                            //         if (data == "YES") {
+                            //             $ele.fadeOut().remove();
+                            //             alert("Form deleted successfully");
+                            //             window.location.reload();
+                            //         } else {
+                            //             window.location.reload();
+                            //
+                            //         }
+                            //     }
+                            // });
+                        }
+
+                });
+            });
+        </script>
+
+    <?php
 
     echo '<input id="specialNumber" value="'.$userId.'" style="display:none;">';
     /***
@@ -2861,10 +2894,41 @@ function StudentDashboard($row2, $security, $found,$different,$userId){
      * If only selected course is first aid or whitecard
      *
      ***/
+    echo '<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="card-body">
+            <form>
+                <select class="custom-select custom-select-lg mb-3" id="changeOfCourse" style="padding: 20px;font-size: 16px;">
+                        <option selected>Open this select menu</option>
+                        <option value="CHC33015 Certificate III in Individual Support">CHC33015 Certificate III in Individual Support (Aged Care)</option>
+                        <option value="CPP20218 Certificate II in Security Operations">CPP20218 Certificate II in Security Operations</option>
+                        <option value="CHC30113 Certificate III in Early Childhood Education and Care">CHC30113 Certificate III in Early Childhood Education and Care</option>
+                        <option value="CHC50113 Diploma of Early Childhood Education and Care">CHC50113 Diploma of Early Childhood Education and Care</option>
+                        <option value="HLTAID009 Provide cardiopulmonary resuscitation">HLTAID009 Provide cardiopulmonary resuscitation</option>
+                        <option value="HLTAID010 Provide basic emergency life support">HLTAID010 Provide basic emergency life support</option>
+                        <option value="HLTAID011 Provide First Aid">HLTAID011 Provide First Aid</option>
+                        <option value="HLTAID012 Provide First Aid in an education and care setting">HLTAID012 Provide First Aid in an education and care setting</option>
+                        <option value="CPCCWHS1001 Prepare to work safely in the Construction Industry">CPCCWHS1001 Prepare to work safely in the Construction Industry</option>
+                        <option value="CHC40213 Certificate IV in Education Support">CHC40213 Certificate IV in Education Support</option>
+                        <option value="CHC43015 Certificate IV in Ageing Support">CHC43015 Certificate IV in Ageing Support</option>
+                        <option value="CHC43115 Certificate IV in Disability">CHC43115 Certificate IV in Disability</option>
+                    </select>
+            <br>
+                    <button type="submit" class="btn btn-primary startanewcourse" style="padding: 20px;font-size: 16px;">Submit</button>
+        </form>
+        </div>
+    </div>
+  </div>
+</div>';
+
     if($row2['enrolForm']!=NULL && $row2['skillForm']!=NULL && $row2['usiForm']!=NULL && $row2['documentForm']!=NULL && $row2['ptrForm']!=NULL && $row2['llnForm']!=NULL){
-        echo '<div style="text-align: center !important;"><img src="img/completed task.png"  style="width: 30%;"> <br><h1> Thank You!</h1><br>The enrolment process is completed. We will be in touch with you soon.</div>';
+        echo '<div style="text-align: center !important;"><img src="img/completed task.png"  style="width: 30%;"> <br><h1> Thank You for completing the enrolment process!</h1><br><p>Do you want to enrol for another course?</p><button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg" style="margin-bottom: 20px;">Start a new enrolment</button>
+
+</div>';
     }elseif ($row2['enrolForm']!=NULL && $row2['documentForm']!=NULL && $found==1 && $different==0){
-        echo '<div style="text-align: center !important;"><img src="img/completed task.png"  style="width: 30%;"> <br><h1> Thank You!</h1><br>The enrolment process is completed. We will be in touch with you soon.</div>';
+        echo '<div style="text-align: center !important;"><img src="img/completed task.png"  style="width: 30%;"> <br><h1> Thank You!</h1><br><p>Do you want to enrol for another course?</p><button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg" style="margin-bottom: 20px;">Start a new enrolment</button>
+</div>';
     }else{
         echo '<h1 class="mb-4 text-gray-800" style="text-align: center; padding-top: 30px;">Dashboard</h1>';
         /***

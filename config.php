@@ -1,7 +1,7 @@
 <?php
 try {
 
-    $pdo = new PDO('mysql:host=localhost;dbname=optimis7_testenrol;charset=utf8mb4', 'optimis7_awais', 'bbfdcc$123');
+    $pdo = new PDO('mysql:host=localhost;dbname=optimis7_of-enrolment-app2;charset=utf8mb4', 'optimis7_awais', 'bbfdcc$123');
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 

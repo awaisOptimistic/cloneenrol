@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="c0140b83-d6cb-456a-81b5-053cf64edd10" name="clone@cloneenrol.enrol.of.edu.au" url="http://clone@cloneenrol.enrol.of.edu.au">
+        <fileTransfer host="clone@cloneenrol.enrol.of.edu.au" port="21">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
