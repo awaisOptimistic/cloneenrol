@@ -69,7 +69,7 @@ if (isset($_POST['sentOTP'])){
     if ($count!=1) {
         if($role==3){
             /***Insert Query***/
-            $query  = "INSERT INTO `user`(`firstname`, `lastname`, `email`, `password`, `phone`, `source`, `campus`, `role`, `referral`, `verified`, `uqid`) VALUES (:firstname, :lastname, :email, :password,:phone,:sources,:campus, :roles, :referred, :verified, :uqid)";
+            $query  = "INSERT INTO `user`(`firstname`, `lastname`, `email`, `password`, `phone`, `source`, `campus`, `role`, `courses`, `referral`, `verified`, `uqid`) VALUES (:firstname, :lastname, :email, :password,:phone,:sources,:campus, :roles, :courses,:referred, :verified, :uqid)";
             $stmt = $pdo->prepare($query);
             $stmt->bindParam('firstname', $FirstName, PDO::PARAM_STR);
             $stmt->bindParam('lastname', $LastName, PDO::PARAM_STR);
@@ -80,6 +80,7 @@ if (isset($_POST['sentOTP'])){
             $stmt->bindParam('campus', $Campus, PDO::PARAM_STR);
             $stmt->bindParam('roles', $role, PDO::PARAM_STR);
             $stmt->bindParam('referred', $ReferredBy, PDO::PARAM_STR);
+            $stmt->bindParam('courses', $course, PDO::PARAM_STR);
             $stmt->bindParam('verified', $verified, PDO::PARAM_STR);
             $stmt->bindParam('uqid', $uqid, PDO::PARAM_STR);
             $stmt->execute();
@@ -117,9 +118,6 @@ if (isset($_POST['sentOTP'])){
             $getCourseId = $stmtGetCourse->fetch();
             $courseId = $getCourseId['id'];
 
-            $updateUserForCourse = "UPDATE user SET courses=? WHERE id=?";
-            $updateUserForCourse= $pdo->prepare($updateUserForCourse);
-            $result = $updateUserForCourse->execute([$courseId,$userId]);
 
             /**********************************************************
              *
@@ -162,6 +160,19 @@ if (isset($_POST['sentOTP'])){
             $stmt5 = $pdo->prepare($query5);
             $stmt5->bindParam('uqid', $uqid, PDO::PARAM_STR);
             $stmt5->execute();
+            /***********
+             *
+             * Code changes start
+             *
+             */
+            $updateUserForCourseInEnrolment = "UPDATE `of_enrolment` SET courseid=? WHERE usrid=?";
+            $updateUserForCourse= $pdo->prepare($updateUserForCourseInEnrolment);
+            $result = $updateUserForCourse->execute([$courseId,$userId]);
+            /**********
+             *
+             * Code changes END
+             *
+             */
 
             //send_newaccount_mail_tostudent($name, $Email);
             send_mail_tocoordinator($name,$uqid, $Email, $course);

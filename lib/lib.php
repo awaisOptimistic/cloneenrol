@@ -2860,11 +2860,13 @@ function StudentDashboard($row2, $security, $found,$different,$userId){
              * Ajax to delete form
              */
             $(function(){
-                $(document).on('click','.startanewcourse',function() {
+                $(document).on('click','.startanewcourse',function(event) {
                          //alert('working');
+                        event.preventDefault();
                         var val = $("#changeOfCourse").find(":selected").text();
                         if(val!="Open this select menu"){
-                            // // console.log(del_id);
+                            alert("ok");
+
                             // $.ajax({
                             //     type: 'POST',
                             //     url: 'insertform.php',
@@ -2924,7 +2926,6 @@ function StudentDashboard($row2, $security, $found,$different,$userId){
 
     if($row2['enrolForm']!=NULL && $row2['skillForm']!=NULL && $row2['usiForm']!=NULL && $row2['documentForm']!=NULL && $row2['ptrForm']!=NULL && $row2['llnForm']!=NULL){
         echo '<div style="text-align: center !important;"><img src="img/completed task.png"  style="width: 30%;"> <br><h1> Thank You for completing the enrolment process!</h1><br><p>Do you want to enrol for another course?</p><button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg" style="margin-bottom: 20px;">Start a new enrolment</button>
-
 </div>';
     }elseif ($row2['enrolForm']!=NULL && $row2['documentForm']!=NULL && $found==1 && $different==0){
         echo '<div style="text-align: center !important;"><img src="img/completed task.png"  style="width: 30%;"> <br><h1> Thank You!</h1><br><p>Do you want to enrol for another course?</p><button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg" style="margin-bottom: 20px;">Start a new enrolment</button>

@@ -11,6 +11,7 @@ include('class/forms.php');
 include('class/users.php');
 include('class/setting.php');
 include('api/JotForm.php');
+include('lib/userlib.php');
 //include ('lib/apilib.php');
 
 global  $url, $enrolmentForm, $usiForm, $skillForm, $documentForm, $usitransForm,$seclln;

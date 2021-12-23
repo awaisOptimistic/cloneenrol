@@ -483,11 +483,15 @@ class users{
             </div>';
 
             include "config.php";
+
+
             $query2 = "SELECT * FROM `of_enrolment` , `user` WHERE of_enrolment.usrid = user.id AND user.role = 3 ORDER BY of_enrolment.id DESC";
             $stmt2 = $pdo->prepare($query2);
             //$stmt2->bindParam('userId', $userId, PDO::PARAM_STR);
             $stmt2->execute();
             $row2   = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+
+
             $i= 1;
 
             print_table_header();
@@ -527,8 +531,6 @@ class users{
                </tfoot>
                <tbody>';
             foreach ($row2 as $data){
-                //check for the course of the student
-                $course=getStudentCourse($data["courses"]);
                 echo '<tr>';
                 echo '<td ">'.$i.'</td>';
                 echo '<td >' . $data["uqid"] . '</td>';
