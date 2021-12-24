@@ -13,6 +13,7 @@ if(isset($_SESSION['role'])){
   $uqid = get_uqid($userid);
   if($role==1){$roleName="Admin";}elseif($role==2){$roleName="Coordinator";}elseif($role==4){$roleName="Auditor";}else{$roleName="Student";}
 }else{
+
   header("/");
   exit();
 }
@@ -75,7 +76,8 @@ global $url;
                 </div>
               </a>
               <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                <a href="../logout.php" class="dropdown-item">Logout</a>
+                  <a href="index.php?page=25" class="dropdown-item">Edit Profile</a>
+                  <a href="logout.php" class="dropdown-item">Logout</a>
               </div>
             </div>
           </div>

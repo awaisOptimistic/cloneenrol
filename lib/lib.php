@@ -1807,7 +1807,7 @@ function get_breadcrumbs($page){
                                 <li><a href="'.$url.'/index.php?page=24">Permissions Settings</a></li>';
     }elseif($page == 25){
         echo ' <li><i class="fa fa-angle-right"></i></li>
-                                <li><a href="'.$url.'/index.php?page=25">Default Permissions</a></li>';
+                                <li><a href="'.$url.'/index.php?page=25">Edit Profile</a></li>';
     }else{
         echo '<li><i class="fa fa-angle-right"></i></li>';
     }
@@ -2409,7 +2409,7 @@ function userDetails($userId){
     try {
         global $pdo;
 
-        $query2 = "SELECT * FROM `of_enrolment` JOIN user ON of_enrolment.usrid= user.id AND of_enrolment.usrid=:userId";
+        $query2 = "SELECT * FROM `of_enrolment`  JOIN user ON of_enrolment.usrid= user.id AND of_enrolment.usrid=:userId ORDER BY of_enrolment.id DESC LIMIT 1";
         $stmt2 = $pdo->prepare($query2);
         $stmt2->bindParam('userId', $userId, PDO::PARAM_STR);
         $stmt2->execute();
@@ -2866,22 +2866,21 @@ function StudentDashboard($row2, $security, $found,$different,$userId){
                         var val = $("#changeOfCourse").find(":selected").text();
                         if(val!="Open this select menu"){
                             alert("ok");
-
-                            // $.ajax({
-                            //     type: 'POST',
-                            //     url: 'insertform.php',
-                            //     data: {'del_id': del_id},
-                            //     success: function (data) {
-                            //         if (data == "YES") {
-                            //             $ele.fadeOut().remove();
-                            //             alert("Form deleted successfully");
-                            //             window.location.reload();
-                            //         } else {
-                            //             window.location.reload();
-                            //
-                            //         }
-                            //     }
-                            // });
+                            $.ajax({
+                                type: 'POST',
+                                url: 'lib/userlib.php',
+                                data: {'newcourse': val},
+                                success: function (data) {
+                                    alert(data);
+                                    if (data == "YES") {
+                                        $('#addANewCourse').remove();
+                                        $('.addANewCourseCard').append('<div class="alert alert-success" role="alert">Changed Successfully. Refresh to see the changes.</div>');
+                                        $('#newenrolment').remove();
+                                    } else {
+                                        window.location.reload();
+                                    }
+                                }
+                            });
                         }
 
                 });
@@ -2899,8 +2898,8 @@ function StudentDashboard($row2, $security, $found,$different,$userId){
     echo '<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <div class="card-body">
-            <form>
+      <div class="card-body addANewCourseCard">
+            <form id="addANewCourse">
                 <select class="custom-select custom-select-lg mb-3" id="changeOfCourse" style="padding: 20px;font-size: 16px;">
                         <option selected>Open this select menu</option>
                         <option value="CHC33015 Certificate III in Individual Support">CHC33015 Certificate III in Individual Support (Aged Care)</option>
@@ -2925,10 +2924,10 @@ function StudentDashboard($row2, $security, $found,$different,$userId){
 </div>';
 
     if($row2['enrolForm']!=NULL && $row2['skillForm']!=NULL && $row2['usiForm']!=NULL && $row2['documentForm']!=NULL && $row2['ptrForm']!=NULL && $row2['llnForm']!=NULL){
-        echo '<div style="text-align: center !important;"><img src="img/completed task.png"  style="width: 30%;"> <br><h1> Thank You for completing the enrolment process!</h1><br><p>Do you want to enrol for another course?</p><button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg" style="margin-bottom: 20px;">Start a new enrolment</button>
+        echo '<div style="text-align: center !important;"><img src="img/completed task.png"  style="width: 30%;"> <br><h1> Thank You for completing the enrolment process!</h1><br><p>Do you want to enrol for another course?</p><button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg" style="margin-bottom: 20px;" id="newenrolment">Start a new enrolment</button>
 </div>';
     }elseif ($row2['enrolForm']!=NULL && $row2['documentForm']!=NULL && $found==1 && $different==0){
-        echo '<div style="text-align: center !important;"><img src="img/completed task.png"  style="width: 30%;"> <br><h1> Thank You!</h1><br><p>Do you want to enrol for another course?</p><button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg" style="margin-bottom: 20px;">Start a new enrolment</button>
+        echo '<div style="text-align: center !important;"><img src="img/completed task.png"  style="width: 30%;"> <br><h1> Thank You!</h1><br><p>Do you want to enrol for another course?</p><button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg" style="margin-bottom: 20px;" id="newenrolment">Start a new enrolment</button>
 </div>';
     }else{
         echo '<h1 class="mb-4 text-gray-800" style="text-align: center; padding-top: 30px;">Dashboard</h1>';

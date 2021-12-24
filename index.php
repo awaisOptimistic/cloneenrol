@@ -257,6 +257,13 @@ global  $url, $enrolmentForm, $usiForm, $skillForm, $documentForm, $usitransForm
             }else{
                 echo '<script type="text/javascript">window.location.href = "'.$url.'"</script>';
             }
+        }else if($page == 25){
+            if($role){
+                $users = new users();
+                $users->editProfile($page);
+            }else{
+                echo '<script type="text/javascript">window.location.href = "'.$url.'"</script>';
+            }
         }else{
             $forms = new forms();
             $forms->student_form($role);

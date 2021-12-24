@@ -1128,6 +1128,13 @@ class users{
 
         <?php
     }
+    function editProfile($page){
+        get_breadcrumbs($page);
+
+        echo '';
+
+
+    }
 
 
 }
