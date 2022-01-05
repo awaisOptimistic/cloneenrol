@@ -23,10 +23,13 @@ require_once ('lib.php');
         $sql = "UPDATE `user` SET `courses`=? WHERE id=?";
         $stmt= $pdo->prepare($sql);
         $stmt->execute([$_POST["newcourse"],$userId]);
-
         echo ("YES");
-
     }
+
+if (isset($_POST["oldpass"])){
+
+    //echo ("NO");
+}
 
 
 ?>

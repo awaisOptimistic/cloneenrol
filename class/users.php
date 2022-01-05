@@ -1128,10 +1128,300 @@ class users{
 
         <?php
     }
+
+    /************
+    Code changed
+     *
+     **************/
     function editProfile($page){
         get_breadcrumbs($page);
+        $user=$_SESSION['userid'];
+        //echo $user;
+        $course=getCourseName($user);
+        $enrolmentProgress=enrolmentProgress($user);
+        //var_dump($enrolmentProgress);
+        ?>
+        <script>
+            /**
+             * Ajax to delete form
+             */
+            $(function(){
+                $(document).on('click','.startanewcourse',function(event) {
+                    //alert('working');
+                    event.preventDefault();
+                    var val = $("#changeOfCourse").find(":selected").text();
+                    if(val!="Open this select menu"){
+                        alert("ok");
+                        $.ajax({
+                            type: 'POST',
+                            url: 'lib/userlib.php',
+                            data: {'newcourse': val},
+                            success: function (data) {
+                                alert(data);
+                                if (data == "YES") {
+                                    $('#addANewCourse').remove();
+                                    $('.addANewCourseCard').append('<div class="alert alert-success" role="alert">Changed Successfully. Refresh to see the changes.</div>');
+                                    $('#newenrolment').remove();
+                                } else {
+                                    window.location.reload();
+                                }
+                            }
+                        });
+                    }
 
-        echo '';
+                });
+                // Password validation
+
+                var OldPassword = $('#oldPassword').val();
+
+                var passwordError=0;
+                $('#Password').change(function(){
+                    var password = $('#Password').val();
+                    var repeatPassword = $('#RepeatPassword').val();
+                    if (password.length < 8 ) {
+                        $('#passwordError').remove();
+                        $('#passworderror').append('<div class="error" id="passwordError" style="padding-top:10px;margin:0px;margin:0px;"><p class="error" style="color:red; font-size:12px;">Password must be at least 8 characters</p></div>');
+                        passwordError=1;
+                    }else if(password!=repeatPassword){
+                        $('#passwordError').remove();
+                        $('#passworderror').append('<div class="error" id="passwordError"  style="padding-top:10px;margin:0px;margin:0px;"><p class="error" style="color:red; font-size:12px;">Password do not match.</p></div>');
+                        passwordError=1;
+                    }else if(password==repeatPassword){
+                        $('#passwordError').remove();
+                        passwordError=2;
+                    }
+                });
+
+                $('#RepeatPassword').change(function(){
+
+                    var repeatPassword = $('#RepeatPassword').val();
+                    if (password.length < 8 ) {
+                        $('#passwordError').remove();
+                        $('#passworderror').append('<div class="error" id="passwordError" style="padding-top:10px;margin:0px;margin:0px;"><p class="error" style="color:red; font-size:12px;">Password must be at least 8 characters</p></div>');
+                        passwordError=1;
+                    }else if(password!=repeatPassword){
+                        $('#passwordError').remove();
+                        $('#passworderror').append('<div class="error" id="passwordError"  style="padding-top:10px;margin:0px;margin:0px;"><p class="error" style="color:red; font-size:12px;">Password do not match.</p></div>');
+                        passwordError=1;
+                    }else if(password==repeatPassword){
+                        $('#passwordError').remove();
+                        passwordError=2;
+                    }
+                });
+                $('#RepeatPassword').change(function(){
+                    if ( oldPassword.length < 2 ) {
+                        $('#oldPasswordError').remove();
+                        $('#oldpassworderror').append('<div class="error" id="oldPasswordError" style="padding-top:10px;margin:0px;margin:0px;"><p class="error" style="color:red; font-size:12px;">Password cannot empty</p></div>');
+                    }
+                });
+
+
+                $('#updatePassword').submit(function(e) {
+
+                    e.preventDefault();
+                    var errorCount=0;
+                    var repeatPassword = $('#RepeatPassword').val();
+                    var oldPassword = $('#oldPassword').val();
+                    var password = $('#Password').val();
+                    if (password.length < 8 ) {
+                        $('#passwordError').remove();
+                        $('#passworderror').append('<div class="error" id="passwordError" style="padding-top:10px;margin:0px;margin:0px;"><p class="error" style="color:red; font-size:12px;">Password must be at least 8 characters</p></div>');
+                        errorCount++;
+                    }else if(password!=repeatPassword){
+                        $('#passwordError').remove();
+                        $('#passworderror').append('<div class="error" id="passwordError" style="padding-top:10px;margin:0px;margin:0px;"><p class="error" style="color:red; font-size:12px;">Password do not match.</p></div>');
+                        errorCount++;
+                    }else if(password==repeatPassword){
+                        $('#passwordError').remove();
+                    }
+                    if ( oldPassword.length < 1 ) {
+                        $('#oldPasswordError').remove();
+                        $('#oldpassworderror').append('<div class="error" id="oldPasswordError" style="padding-top:10px;margin:0px;margin:0px;"><p class="error" style="color:red; font-size:12px;">Password cannot empty</p></div>');
+                        errorCount++;
+                    }else{
+                        $('#oldPasswordError').remove();
+                    }
+
+                    if(errorCount==0){
+
+                        $.ajax({
+                            type: 'POST',
+                            url: 'lib/userlib.php',
+                            data: {'oldpass': oldPassword,'newpassword':password},
+                            success: function (data) {
+                                alert(data);
+                                if (data == "NO") {
+                                    $('.passError').append('<br><div class="alert alert-danger" role="alert">Current Password is incorrect. Please Try again.</div>');
+                                } else {
+                                    //alert(data);
+                                    //alert("Password Changed Succesfully");
+                                    //window.location.reload();
+                                }
+                            }
+                        });
+                    }
+                });
+
+            });
+        </script>
+
+        <?php
+        echo '<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<div class="container">
+<div class="row flex-lg-nowrap">
+  <div class="col">
+    <div class="row">
+      <div class="col mb-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="e-profile">
+              <div class="row">
+                <div class="col-12 col-sm-auto mb-3">
+                  <div class="mx-auto" style="width: 140px;">
+                    <div class="d-flex justify-content-center align-items-center rounded" style="height: 140px; background-color: rgb(233, 236, 239);">
+                      <span style="color: rgb(166, 168, 170); font: bold 8pt Arial;">
+                      <span class="avatar">
+                              <span class="badge bg-green"></span>'.substr($course["firstname"], 0, 1).'
+                  </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col d-flex flex-column flex-sm-row justify-content-between mb-3">
+                  <div class="text-center text-sm-left mb-2 mb-sm-0">
+                    <h2 class="pt-sm-2 pb-1 mb-0 text-nowrap">'.$course["firstname"].' '.$course["lastname"].'</h2>
+                  </div>
+                  <div class="text-center text-sm-right">';
+                if ($course["role"]==1){
+                    echo '<span class="badge badge-secondary">Admin</span>';
+                }elseif ($course["role"]==2){
+                    echo '<span class="badge badge-secondary">Coordinator</span>';
+                }elseif ($course["role"]==3){
+                    echo '<span class="badge badge-secondary">Student</span>';
+                }
+        echo '
+                    
+                  </div>
+                </div>
+              </div>
+              <ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Change course</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Change password</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Change Personal details</button>
+  </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+  <br>
+  <h1>Currently selected course:</h1>
+  <span style="font-size: 16px;">'.$course["courses"].'</span>
+  ';
+        if($enrolmentProgress['enrolForm']==NULL){
+
+                echo '
+  <div class="card-body addANewCourseCard">
+            <form id="addANewCourse">
+                <select class="custom-select custom-select-lg mb-3" id="changeOfCourse" style="padding: 20px;font-size: 16px;">
+                        <option selected>Open this select menu</option>
+                        <option value="CHC33015 Certificate III in Individual Support">CHC33015 Certificate III in Individual Support (Aged Care)</option>
+                        <option value="CPP20218 Certificate II in Security Operations">CPP20218 Certificate II in Security Operations</option>
+                        <option value="CHC30113 Certificate III in Early Childhood Education and Care">CHC30113 Certificate III in Early Childhood Education and Care</option>
+                        <option value="CHC50113 Diploma of Early Childhood Education and Care">CHC50113 Diploma of Early Childhood Education and Care</option>
+                        <option value="HLTAID009 Provide cardiopulmonary resuscitation">HLTAID009 Provide cardiopulmonary resuscitation</option>
+                        <option value="HLTAID010 Provide basic emergency life support">HLTAID010 Provide basic emergency life support</option>
+                        <option value="HLTAID011 Provide First Aid">HLTAID011 Provide First Aid</option>
+                        <option value="HLTAID012 Provide First Aid in an education and care setting">HLTAID012 Provide First Aid in an education and care setting</option>
+                        <option value="CPCCWHS1001 Prepare to work safely in the Construction Industry">CPCCWHS1001 Prepare to work safely in the Construction Industry</option>
+                        <option value="CHC40213 Certificate IV in Education Support">CHC40213 Certificate IV in Education Support</option>
+                        <option value="CHC43015 Certificate IV in Ageing Support">CHC43015 Certificate IV in Ageing Support</option>
+                        <option value="CHC43115 Certificate IV in Disability">CHC43115 Certificate IV in Disability</option>
+                    </select>
+            <br>
+                    <button type="submit" class="btn btn-primary startanewcourse" style="padding: 20px;font-size: 16px;">Submit</button>
+        </form>
+        </div>
+        ';
+        }else{
+            echo '<h4 style="border: 4px solid red;padding: 10px;">You cannot change course after completion of the step 1. Please contact office to get it reset for you.</h4>';
+        }
+                echo '
+  
+</div>
+  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+  <form class="form" id="updatePassword">
+                    <div class="row">
+                   
+                    </div>
+                    <div class="row">
+                      <div class="col-12 col-sm-6 mb-3">
+                        <br>
+                        <div class="mb-3">
+                            <label>Current Password</label>
+                            <div class="input-group input-group-flat">
+                                
+                                <input type="password" class="form-control form-control-user" id="oldPassword" placeholder="••••••" name="oldPassword">
+                                <span class="input-group-text">
+                                       <a href="#" class="link-secondary" title="" data-bs-toggle="tooltip" data-bs-original-title="Show password" onClick="pass2();"><!-- Download SVG icon from http://tabler-icons.io/i/eye -->
+                                       <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><circle cx="12" cy="12" r="2"></circle><path d="M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7"></path></svg>
+                                       </a>
+                                </span>
+                            </div>
+                        </div>
+                        <div id="oldpassworderror" style="margin-left: 20px;"></div>
+                        
+                        <br>
+                        <div class="form-group row mb-3">
+                        <div class="mb-3">
+                            <label>New Password</label>
+                            <div class="input-group input-group-flat">
+                                <input type="password" class="form-control form-control-user" id="Password" name="password" placeholder="••••••">
+                                <span class="input-group-text">
+                                        <a href="#" class="link-secondary" title="" data-bs-toggle="tooltip" data-bs-original-title="Show password" onClick="pass();"><!-- Download SVG icon from http://tabler-icons.io/i/eye -->
+                                          <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><circle cx="12" cy="12" r="2"></circle><path d="M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7"></path></svg>
+                                        </a>
+                                 </span>
+                            </div>
+                        </div>
+    
+                        <div class="mb-3">
+                            <label>Confirm New Password</label>
+                            <div class="input-group input-group-flat">
+                                
+                                <input type="password" class="form-control form-control-user" id="RepeatPassword" placeholder="••••••" name="repeatpassword">
+                                <span class="input-group-text">
+                                       <a href="#" class="link-secondary" title="" data-bs-toggle="tooltip" data-bs-original-title="Show password" onClick="pass2();"><!-- Download SVG icon from http://tabler-icons.io/i/eye -->
+                                       <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><circle cx="12" cy="12" r="2"></circle><path d="M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7"></path></svg>
+                                       </a>
+                                </span>
+                            </div>
+                        </div>
+                        <div id="passworderror" style="margin-left: 20px;"></div>
+                    </div>
+                       <button type="submit" class="btn btn-primary updatePassword" style="padding: 20px;font-size: 16px;">Submit</button>
+                       <div class="passError"></div>
+                      </div>
+                    </div>
+                  </form>
+                  </div>
+                  
+  <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">.3..</div>
+</div>
+              
+              
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+</div>';
 
 
     }

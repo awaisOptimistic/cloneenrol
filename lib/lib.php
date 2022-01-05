@@ -2,6 +2,24 @@
 //include('config.php');
 global $rapidId;
 
+function getCourseName($userid){
+    global $pdo;
+    $query = "SELECT * FROM `user` WHERE id =:userid";
+    $stmt = $pdo->prepare($query);
+    $stmt->bindParam('userid',  $userid, PDO::PARAM_STR);
+    $stmt->execute();
+    $row   = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $row;
+}
+function enrolmentProgress($user){
+    global $pdo;
+    $query = "SELECT * FROM `of_enrolment` WHERE `usrid` =:userid";
+    $stmt = $pdo->prepare($query);
+    $stmt->bindParam('userid',  $user, PDO::PARAM_STR);
+    $stmt->execute();
+    $row   = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $row;
+}
 function send_sms_to_coordinator($name,$uqid, $Email,$course){
     global $url;
     $txt  = 'Hi,
