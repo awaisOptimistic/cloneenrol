@@ -1149,20 +1149,19 @@ class users{
                     event.preventDefault();
                     var val = $("#changeOfCourse").find(":selected").text();
                     if (val != "Open this select menu") {
-                        alert("ok");
+                        //alert("ok");
                         $.ajax({
                             type: 'POST',
                             url: 'lib/userlib.php',
                             data: {'newcourse': val},
                             success: function (data) {
-                                alert(data);
-                                if (data == "YES") {
-                                    $('#addANewCourse').remove();
-                                    $('.addANewCourseCard').append('<div class="alert alert-success" role="alert">Changed Successfully. Refresh to see the changes.</div>');
-                                    $('#newenrolment').remove();
-                                } else {
-                                    window.location.reload();
-                                }
+                                //alert(data);
+
+                                    $("#oldCourseSpan").remove();
+                                    $("#currentcourse").append('<span style="font-size: 16px;" id="oldCourseSpan">'+val+'</span>');
+                                    $("#coursechangemessage").remove();
+                                    $('.CourseChangeMessage').append('<div class="alert alert-success" id="coursechangemessage" role="alert">Course changed.</div>');
+                                    $('.addANewCourseCard').remove();
                             }
                         });
                     }
@@ -1254,13 +1253,16 @@ class users{
                             url: 'lib/userlib.php',
                             data: {'oldpass': oldPassword,'newpassword':password},
                             success: function (data) {
-                                alert(data);
+                                //alert(data);
                                 if (data == "NO") {
-                                    $('.passError').append('<br><div class="alert alert-danger" role="alert">Current Password is incorrect. Please Try again.</div>');
+                                    $("#passwordNotMatch").remove();
+                                    $('.passError').append('<div class="alert alert-danger" id="passwordNotMatch" role="alert">Current Password is incorrect. Please Try again.</div>');
                                 } else {
-                                    //alert(data);
-                                    //alert("Password Changed Succesfully");
-                                    //window.location.reload();
+                                    $("#passwordNotMatch").remove();
+
+                                    $("#updatePassword").remove();
+                                    $('#passwordChangeConfirmation').append('<div class="alert alert-success" id="coursechangemessage" role="alert">Password changed.</div>');
+
                                 }
                             }
                         });
@@ -1323,7 +1325,9 @@ class users{
   <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
   <br>
   <h1>Currently selected course:</h1>
-  <span style="font-size: 16px;">'.$course["courses"].'</span>
+  <div id="currentcourse"> <span style="font-size: 16px;" id="oldCourseSpan">'.$course["courses"].'</span></div>
+  <br>
+                    <div class="CourseChangeMessage"></div>
   ';
         if($enrolmentProgress['enrolForm']==NULL){
 
@@ -1347,7 +1351,9 @@ class users{
                     </select>
             <br>
                     <button type="submit" class="btn btn-primary startanewcourse" style="padding: 20px;font-size: 16px;">Submit</button>
+                    
         </form>
+       
         </div>
         ';
         }else{
@@ -1407,13 +1413,34 @@ class users{
                         <div id="passworderror" style="margin-left: 20px;"></div>
                     </div>
                        <button type="submit" class="btn btn-primary updatePassword" style="padding: 20px;font-size: 16px;">Submit</button>
+                       <br>
                        <div class="passError"></div>
                       </div>
                     </div>
                   </form>
+                   <div id="passwordChangeConfirmation"></div>
                   </div>
                   
-  <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">.3..</div>
+    <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+     <h1>Currently phone number:</h1>
+    <div id="currentcourse"> <span style="font-size: 16px;" id="oldCourseSpan">+61'.$course["phone"].'</span></div>
+        <form class="form" id="changePhone">
+           <div class="row">
+                <div class="col-sm-3" style="padding: 20px;">
+                     <div class="form-group mb-3">
+                        <input type="tel" class="form-control form-control-user" id="phone" placeholder="Phone" name="phone" style="margin-bottom: 2px;">
+                        <input type="tel" class="form-control form-control-user" id="otp" placeholder="Please type recieved code here" name="otp" style="display: none;" style="margin-bottom: 2px;!important;">
+                        <a class="btn btn-primary" href="#" role="button" id="verify"  onClick="verifyOTP();" style="display:none;" style="margin-bottom: 2px;!important;" >Verify</a>
+                        <a class="btn btn-primary" href="#" role="button" id="sendAgain" onClick="sendOTP();" style="margin-bottom: 2px !important;">Send OTP</a>
+                        <p id="verifyPhoneblock" style="display: none;color:#18bd5b !important;">Phone verified</p>
+                    </div>
+                </div>
+           </div>
+                    <button type="submit" class="btn btn-primary changePhone" style="">Change Phone</button>
+        </form>
+                   <div id="phoneChangeConfirmation"></div>
+  
+    </div>
 </div>
               
               
@@ -1427,7 +1454,115 @@ class users{
   </div>
 </div>
 </div>';
+?>
+        <script>
+            var phoneVerification=0;
+            function sendOTP(){
+                var phone = $('#phone').val();
+                var phoneRegex=/^(?:\+?(61))? ?(?:\((?=.*\)))?(0?[2-57-8])\)? ?(\d\d(?:[- ](?=\d{3})|(?!\d\d[- ]?\d[- ]))\d\d[- ]?\d[- ]?\d{3})$/gm;
+                if (phone.length < 1) {
+                    $('#phoneError').remove();
+                    $('#phone').after('<div class="error" id="phoneError" style="padding-top:10px;margin:0px;margin-bottom: 2px;"><p style="color:red; font-size:12px;margin:0px;">This field is required</p></div>');
+                    errorPhone=1;
+                } else {
+                    var validPhone = phoneRegex.test(phone);
+                    if (!validPhone) {
+                        $('#phoneError').remove();
+                        $('#phone').after('<div class="error" id="phoneError" style="padding-top:10px;margin:0px;margin-bottom: 2px;"><p class="error" style="color:red; font-size:12px;margin:0px;">Enter a valid phone number</p></div>');
+                        errorPhone=1;
+                    }else if(validPhone){
+                        $('#phoneError').remove();
+                        errorPhone=2;
+                    }
+                }
+                if (errorPhone==2){
+                    var info={
+                        sentOTP:phone
+                    }
+                    $.ajax({
+                        url: "registerationlogic2.php",
+                        type: "POST",
+                        data: info,
+                        success: function(data){
+                            var a = data.includes("Success");
+                            if(a){
+                                $('#otpWait').remove();
+                                $('#otp').css('display','block');
+                                $("#otp").after( "<p style='color:orange;' id='otpWait'>You can receive next OTP after 1 min.</p>" );
+                                $("#verify").css('display','block');
+                                $("#sendAgain").css('display','none');
+                                alert('OTP Sent');
+                            }else {
+                                alert('OTP Failed.Please check your phone number and try again!');
+                            }
+                        },error: function(xhr, status, error) {
+                            var err = eval("(" + xhr.responseText + ")");
+                            alert(err.Message);
+                        }
+                    });
 
+                    $(this).text('loading...').delay(60000).queue(function() {
+                        if (errorPhone!=2){
+                            $('a#sendAgain').text('Send again');
+                            $("#sendAgain").css('display','block');
+                        }
+                    });
+                }
+            }
+
+            function verifyOTP(){
+                var otp = $('#otp').val();
+                var info={
+                    verifyOTP:otp
+                }
+                $.ajax({
+                    url: "registerationlogic2.php",
+                    type: "POST",
+                    data: info,
+                    success: function(data){
+                        //alert(data);
+                        var a = data.includes("success");
+                        if(a){
+                            $('#otpWait').remove();
+                            $("#errorblock").css("display","none");
+                            $("#otp").remove();
+                            $("#verify").remove();
+                            $("#phone").prop('disabled', true);
+                            $("#verifyPhoneblock").css("display","block");
+                            phoneVerification=1;
+                        }else {
+                            alert('OTP Failed. Please Try Again!')
+                        }
+
+                    },error: function(xhr, status, error) {
+                        var err = eval("(" + xhr.responseText + ")");
+                        alert(err.Message);
+                    }
+                });
+            }
+            $('#changePhone').submit(function(e) {
+                var phone = $('#phone').val();
+
+                e.preventDefault();
+                if(phoneVerification==1){
+
+                        $.ajax({
+                            type: 'POST',
+                            url: 'lib/userlib.php',
+                            data: {'phone': phone},
+                            success: function (data) {
+                                alert(data);
+
+                                    $('.phoneChangeConfirmation').append('<div class="alert alert-danger" id="" role="alert">Phone Number Updated.</div>');
+
+                            }
+                        });
+                }
+            });
+
+        </script>
+
+        <?php
 
     }
 
