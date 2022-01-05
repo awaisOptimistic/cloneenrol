@@ -1142,15 +1142,13 @@ class users{
         //var_dump($enrolmentProgress);
         ?>
         <script>
-            /**
-             * Ajax to delete form
-             */
-            $(function(){
-                $(document).on('click','.startanewcourse',function(event) {
+            $(function() {
+
+                $(document).on('click', '.startanewcourse', function (event) {
                     //alert('working');
                     event.preventDefault();
                     var val = $("#changeOfCourse").find(":selected").text();
-                    if(val!="Open this select menu"){
+                    if (val != "Open this select menu") {
                         alert("ok");
                         $.ajax({
                             type: 'POST',
@@ -1170,6 +1168,13 @@ class users{
                     }
 
                 });
+            });
+            /**
+             * Ajax to delete form
+             */
+            $(function(){
+
+
                 // Password validation
 
                 var OldPassword = $('#oldPassword').val();
