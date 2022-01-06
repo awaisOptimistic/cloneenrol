@@ -181,7 +181,6 @@ if (isset($_POST['sentOTP'])){
             $q1 = "UPDATE `user` SET `enrolmentId`=? WHERE id=?";
             $s1e= $pdo->prepare($q1);
             $result = $s1e->execute([$enrolId,$userId]);
-            
 
             /**********
              *

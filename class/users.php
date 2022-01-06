@@ -1155,7 +1155,7 @@ class users{
                             url: 'lib/userlib.php',
                             data: {'newcourse': val},
                             success: function (data) {
-                                //alert(data);
+                                alert(data);
 
                                     $("#oldCourseSpan").remove();
                                     $("#currentcourse").append('<span style="font-size: 16px;" id="oldCourseSpan">'+val+'</span>');

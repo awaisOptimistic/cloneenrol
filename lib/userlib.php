@@ -6,25 +6,52 @@ require_once ('lib.php');
 include '../config.php';
     session_start();
     if (isset($_POST["newcourse"])){
-        echo getcwd() . "\n";
         $userId=$_SESSION['userid'];
-        /***Insert Query***/
-        $queryCourse  = "INSERT INTO `courses`( `userid`, `course`) VALUES (:userid,:course)";
-        $stmtCourse = $pdo->prepare($queryCourse);
-        $stmtCourse->bindParam('userid', $userId, PDO::PARAM_STR);
-        $stmtCourse->bindParam('course', $_POST["newcourse"], PDO::PARAM_STR);
-        $stmtCourse->execute();
+        //Check if current enrolment is empty
 
-        $sql = "UPDATE `user` SET `courses`=? WHERE id=?";
-        $stmt= $pdo->prepare($sql);
-        $stmt->execute([$_POST["newcourse"],$userId]);
+        $query = "select enrolmentId from `user` where `id`=:userid";
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam('userid', $userId, PDO::PARAM_STR);
+        $stmt->execute();
+        $row   = $stmt->fetch(PDO::FETCH_ASSOC);
+        $enrolmentId=$row['enrolmentId'];
 
-        $uqid = get_uqid($userId);
-        $query5  = "INSERT INTO `of_enrolment`(`usrid`, `std_id`)VALUES (:usrid,:uqid )";
-        $stmt5 = $pdo->prepare($query5);
-        $stmt5->bindParam('usrid', $userId, PDO::PARAM_STR);
-        $stmt5->bindParam('uqid', $uqid, PDO::PARAM_STR);
-        $stmt5->execute();
+        $querynew = "SELECT * FROM `of_enrolment` where `id`=:enrolid";
+        $stmtnew = $pdo->prepare($querynew);
+        $stmtnew->bindParam('enrolid', $enrolmentId, PDO::PARAM_STR);
+        $stmtnew->execute();
+        $rownew   = $stmtnew->fetch(PDO::FETCH_ASSOC);
+
+        if($rownew['enrolForm']==NULL){
+        //    //update course name in course table
+            $sql = "UPDATE `courses` SET `course`=? WHERE id=?";
+            $stmt= $pdo->prepare($sql);
+            $stmt->execute([$_POST["newcourse"],$rownew["courseid"]]);
+            //update course name in user table
+            $sql = "UPDATE `user` SET `courses`=? WHERE id=?";
+            $stmt= $pdo->prepare($sql);
+            $stmt->execute([$_POST["newcourse"],$userId]);
+        }else{
+            /***Insert Query***/
+            $queryCourse  = "INSERT INTO `courses`( `userid`, `course`) VALUES (:userid,:course)";
+            $stmtCourse = $pdo->prepare($queryCourse);
+            $stmtCourse->bindParam('userid', $userId, PDO::PARAM_STR);
+            $stmtCourse->bindParam('course', $_POST["newcourse"], PDO::PARAM_STR);
+            $stmtCourse->execute();
+
+            $sql = "UPDATE `user` SET `courses`=? WHERE id=?";
+            $stmt= $pdo->prepare($sql);
+            $stmt->execute([$_POST["newcourse"],$userId]);
+
+            $uqid = get_uqid($userId);
+            $query5  = "INSERT INTO `of_enrolment`(`usrid`, `std_id`)VALUES (:usrid,:uqid )";
+            $stmt5 = $pdo->prepare($query5);
+            $stmt5->bindParam('usrid', $userId, PDO::PARAM_STR);
+            $stmt5->bindParam('uqid', $uqid, PDO::PARAM_STR);
+            $stmt5->execute();
+        }
+
+
         echo ("YES");
     }
 
