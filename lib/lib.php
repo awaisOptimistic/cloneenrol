@@ -2423,7 +2423,7 @@ function get_completedEnrolmentData(){
 }
 
 
-function userDetails($userId){
+function  userDetails($userId){
     try {
         global $pdo;
 
