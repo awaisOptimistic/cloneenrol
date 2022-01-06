@@ -168,6 +168,21 @@ if (isset($_POST['sentOTP'])){
             $updateUserForCourseInEnrolment = "UPDATE `of_enrolment` SET courseid=? WHERE usrid=?";
             $updateUserForCourse= $pdo->prepare($updateUserForCourseInEnrolment);
             $result = $updateUserForCourse->execute([$courseId,$userId]);
+
+            //Get Latest enrolment id and insert into the user
+            /*** Add record in of_enrolment database ***/
+            $query6  = "select id from `of_enrolment` where `usrid`=:userid";
+            $stmt6 = $pdo->prepare($query6);
+            $stmt6->bindParam('userid', $userId, PDO::PARAM_STR);
+            $stmt6->execute();
+            $result2 = $stmt6->fetch();
+            $enrolId = $result2['id'];
+
+            $q1 = "UPDATE `user` SET `enrolmentId`=? WHERE id=?";
+            $s1e= $pdo->prepare($q1);
+            $result = $s1e->execute([$enrolId,$userId]);
+            
+
             /**********
              *
              * Code changes END
