@@ -1423,7 +1423,7 @@ class users{
                   
     <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
      <h1>Currently phone number:</h1>
-    <div id="currentcourse"> <span style="font-size: 16px;" id="oldCourseSpan">+61'.$course["phone"].'</span></div>
+    <div id="currentcourse"> <span style="font-size: 16px;" id="oldCourseSpan">'.$course["phone"].'</span></div>
         <form class="form" id="changePhone">
            <div class="row">
                 <div class="col-sm-3" style="padding: 20px;">

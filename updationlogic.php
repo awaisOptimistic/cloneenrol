@@ -130,7 +130,7 @@ try {
                     'role'=>$role,
                     'id'=>$id
                 ];
-                $query  = "UPDATE user SET  `first name`= :firstname, `last name`= :lastname, `email`= :email, `password`= :password,`phone`=:phone,`source`=:sources, `role`= :role Where id=:id ";
+                $query  = "UPDATE user SET  `firstname`= :firstname, `lastname`= :lastname, `email`= :email, `password`= :password,`phone`=:phone,`source`=:sources, `role`= :role Where id=:id ";
                 $stmt = $pdo->prepare($query);
                 $stmt->execute($data);
                 echo 'Updated Successfully';
@@ -144,7 +144,7 @@ try {
                     'role'=>$role,
                     'id'=>$id
                 ];
-                $query  = "UPDATE user SET  `first name`= :firstname, `last name`= :lastname, `email`= :email, `password`= :password,`phone`=:phone, `role`= :role Where id=:id ";
+                $query  = "UPDATE user SET  `firstname`= :firstname, `lastname`= :lastname, `email`= :email, `password`= :password,`phone`=:phone, `role`= :role Where id=:id ";
                 $stmt = $pdo->prepare($query);
                 $stmt->execute($data);
                 echo 'Updated Successfully';
@@ -161,7 +161,7 @@ try {
                     'role'=>$role,
                     'id'=>$id
                 ];
-                $query  = "UPDATE user SET  `first name`= :firstname, `last name`= :lastname, `email`= :email,`phone`=:phone,`courses`=:courses,`source`=:sources, `role`= :role Where id=:id ";
+                $query  = "UPDATE user SET  `firstname`= :firstname, `lastname`= :lastname, `email`= :email,`phone`=:phone,`courses`=:courses,`source`=:sources, `role`= :role Where id=:id ";
                 $stmt = $pdo->prepare($query);
                 $stmt->execute($data);
                 echo 'Updated Successfully';

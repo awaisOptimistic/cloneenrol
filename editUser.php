@@ -16,7 +16,7 @@ if (isset($_POST['userid'])) {
         $(document).ready(function(){
             var multipleCancelButton = new Choices('#choices-multiple-remove-button', {
                 removeItemButton: true,
-                maxItemCount:3,
+                maxItemCount:1,
                 searchResultLimit:3,
                 renderChoiceLimit:100
             });
@@ -182,11 +182,11 @@ if (isset($_POST['userid'])) {
                                 <input type="text" class="form-control form-control-user" id="userId" name="firstname" value="<?php echo $row["id"]; ?>" style="display: none;">
                                 <div class="mb-3">
                                     <input type="text" class="form-control form-control-user" id="FirstName"
-                                           placeholder="First Name" name="firstname" value="<?php echo $row["first name"]; ?>">
+                                           placeholder="First Name" name="firstname" value="<?php echo $row["firstname"]; ?>">
                                 </div>
                                 <div class="mb-3">
                                     <input type="text" class="form-control form-control-user" id="LastName"
-                                           placeholder="Last Name" name="lastname" value="<?php echo $row["last name"]; ?>">
+                                           placeholder="Last Name" name="lastname" value="<?php echo $row["lastname"]; ?>">
                                 </div>
                                 <div class="form-group mb-3">
                                     <input type="email" class="form-control form-control-user" id="Email"
@@ -260,33 +260,32 @@ if (isset($_POST['userid'])) {
                                         <div class="col-md-12">
                                             <select id="choices-multiple-remove-button" placeholder="Select courses you are interested in" multiple>
 
-                                                <option value="CHC33015" id="CHC33015">CHC33015 Certificate III in Individual Support (Aged Care)</option>
-                                                <option value="CPP20218" id="CPP20218">CPP20218 Certificate II in Security Operations</option>
-                                                <option value="BH" id="BH">Baton & Handcuff</option>
-                                                <option value="CRO" id="CRO">Control Room Operation</option>
-                                                <option value="CHC30113" id="CHC30113">CHC30113 Certificate III in Early Childhood Education and Care</option>
-                                                <option value="CHC50113" id="CHC50113">CHC50113 Diploma of Early Childhood Education and Care</option>
-                                                <option value="HLTAID001" id="HLTAID001">HLTAID001 Provide cardiopulmonary resuscitation</option>
-                                                <option value="HLTAID002" id="HLTAID002">HLTAID002 Provide basic emergency life support</option>
-                                                <option value="HLTAID003" id="HLTAID003">HLTAID003 Provide first aid</option>
-                                                <option value="HLTAID004" id="HLTAID004">HLTAID004 Provide an emergency first aid response in an education and care setting</option>
-                                                <option value="CPC40110" id="CPC40110">CPC40110 Certificate lV in Building and Construction (Building)</option>
-                                                <option value="CPC50210" id="CPC50210">CPC50210 Diploma of Building and Construction (Building)</option>
-                                                <option value="CPCCWHS1001" id="CPCCWHS1001">CPCCWHS1001 Prepare to work safely in the Construction Industry</option>
-                                                <option value="CHC40213" id="CHC40213">CHC40213 Certificate IV in Education Support</option>
-                                                <option value="CHC43015" id="CHC43015">CHC43015 Certificate IV in Ageing Support</option>
-                                                <option value="CHC43115" id="CHC43115">CHC43115 Certificate IV in Disability</option>
+                                                <option value="CHC33015 Certificate III in Individual Support">CHC33015 Certificate III in Individual Support (Aged Care)</option>
+                                                <option value="CPP20218 Certificate II in Security Operations">CPP20218 Certificate II in Security Operations</option>
+                                                <option value="BH">Baton & Handcuff</option>
+                                                <option value="CRO">Control Room Operation</option>
+                                                <option value="CHC30113 Certificate III in Early Childhood Education and Care">CHC30113 Certificate III in Early Childhood Education and Care</option>
+                                                <option value="CHC50113 Diploma of Early Childhood Education and Care">CHC50113 Diploma of Early Childhood Education and Care</option>
+                                                <option value="HLTAID009 Provide cardiopulmonary resuscitation">HLTAID009 Provide cardiopulmonary resuscitation</option>
+                                                <option value="HLTAID010 Provide basic emergency life support">HLTAID010 Provide basic emergency life support</option>
+                                                <option value="HLTAID011 Provide First Aid">HLTAID011 Provide First Aid</option>
+                                                <option value="HLTAID012 Provide First Aid in an education and care setting">HLTAID012 Provide First Aid in an education and care setting</option>
+                                                <option value="CPC40110 Certificate lV in Building and Construction">CPC40110 Certificate lV in Building and Construction (Building)</option>
+                                                <option value="CPC50210 Diploma of Building and Construction">CPC50210 Diploma of Building and Construction (Building)</option>
+                                                <option value="CPCCWHS1001 Prepare to work safely in the Construction Industry">CPCCWHS1001 Prepare to work safely in the Construction Industry</option>
+                                                <option value="CHC40213 Certificate IV in Education Support">CHC40213 Certificate IV in Education Support</option>
+                                                <option value="CHC43015 Certificate IV in Ageing Support">CHC43015 Certificate IV in Ageing Support</option>
+                                                <option value="CHC43115 Certificate IV in Disability">CHC43115 Certificate IV in Disability</option>
                                             </select>
                                             <?php
                                             $courses = explode(",", $row['courses']);
                                             //var_dump($courses);
                                             if($courses!=null || !empty($courses)){
                                                 echo '<h5 style="color: #49c27d;">Currently Selected Courses</h5>';
+                                                echo $row['courses'];
                                                 ?>
                                                 <div id="courseInDB">
-                                                    <ul id="myUL">
 
-                                                    </ul>
                                                     <input type="checkbox" id="samecourses" name="samecourses" value="samecourses">
                                                     <label for="samecourses"> Keep the same courses</label><br>
                                                 </div>
