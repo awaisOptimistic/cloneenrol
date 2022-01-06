@@ -149,7 +149,7 @@ if (isset($_POST['userid'])) {
                         type: "POST",
                         data: info,
                         success: function(data){
-                            alert('success');
+                            //alert(data);
                             var a = data.includes("Success");
                             if (a) {
                                 $("#messageblock").css("display","block");
@@ -193,17 +193,19 @@ if (isset($_POST['userid'])) {
                                            placeholder="Email Address" name="email" value="<?php echo $row["email"]; ?>">
                                 </div>
                                 <div class="form-group mb-3">
-                                    <input type="number" class="form-control form-control-user" id="phone"
+                                    <input type="text" class="form-control form-control-user" id="phone"
                                            placeholder="Phone" name="phone" value="<?php echo $row["phone"]; ?>">
                                 </div>
                                 <div class="form-group row mb-3">
                                     <div class="col-sm-6 mb-3 mb-sm-0 mb-3">
+                                        <label>New Password</label>
                                         <input type="password" class="form-control form-control-user"
-                                               id="Password" placeholder="Password" name="password">
+                                               id="Password" placeholder="**********" name="password">
                                     </div>
                                     <div class="col-sm-6 mb-3">
+                                        <label>Confirm New Password</label>
                                         <input type="password" class="form-control form-control-user"
-                                               id="RepeatPassword" placeholder="Repeat Password" name="repeatpassword">
+                                               id="RepeatPassword" placeholder="**********" name="repeatpassword">
                                     </div>
                                     <div id="passworderror" style="margin-left: 20px;">
                                     </div>

@@ -164,7 +164,27 @@ try {
                 $query  = "UPDATE user SET  `firstname`= :firstname, `lastname`= :lastname, `email`= :email,`phone`=:phone,`courses`=:courses,`source`=:sources, `role`= :role Where id=:id ";
                 $stmt = $pdo->prepare($query);
                 $stmt->execute($data);
+
+                //get course id from enrolment
+                $query23 = "select enrolmentId from `user` where id=:id";
+                $stmt23 = $pdo->prepare($query23);
+                $stmt23->bindValue('id', $id, PDO::PARAM_STR);
+                $stmt23->execute();
+                $enrolmentId   = $stmt23->fetch();
+
+
+                //get course id
+                $query234 = "select courseid  FROM `of_enrolment` where id=:id";
+                $stmt234 = $pdo->prepare($query234);
+                $stmt234->bindValue('id',$enrolmentId[0], PDO::PARAM_STR);
+                $stmt234->execute();
+                $courseId   = $stmt234->fetch();
+                //update courses table as well
+                $sql = "UPDATE `courses` SET `course`=? WHERE id=? ";
+                $stmt= $pdo->prepare($sql);
+                $stmt->execute([$course,$courseId[0]]);
                 echo 'Updated Successfully';
+
             }elseif ($role==3 && $course==NULL){
                 $data = [
                     'firstname'=>$FirstName,
