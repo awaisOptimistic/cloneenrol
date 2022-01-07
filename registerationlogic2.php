@@ -119,6 +119,8 @@ if (isset($_POST['sentOTP'])){
             $courseId = $getCourseId['id'];
 
 
+
+
             /**********************************************************
              *
              *
@@ -178,9 +180,9 @@ if (isset($_POST['sentOTP'])){
             $result2 = $stmt6->fetch();
             $enrolId = $result2['id'];
 
-            $q1 = "UPDATE `user` SET `enrolmentId`=? WHERE id=?";
+            $q1 = "UPDATE `user` SET `enrolmentId`=?,`courseid`=? WHERE id=?";
             $s1e= $pdo->prepare($q1);
-            $result = $s1e->execute([$enrolId,$userId]);
+            $result = $s1e->execute([$enrolId,$courseId,$userId]);
 
             /**********
              *

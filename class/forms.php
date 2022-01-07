@@ -470,8 +470,8 @@ function filterFunction() {
      **/
     public function student_form($role){
 
-        global $pdo,$url,  $enrolmentForm, $usiForm, $skillForm, $documentForm, $usitransForm ,$seclln;
-        $userId=$_SESSION['userid'];
+            global $pdo,$url,  $enrolmentForm, $usiForm, $skillForm, $documentForm, $usitransForm ,$seclln;
+            $userId=$_SESSION['userid'];
 
             /** Edited By Inam 07/12/2021 */
             $query = "select * from user where `id`=:userId";

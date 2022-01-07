@@ -1551,7 +1551,7 @@ class users{
                             url: 'lib/userlib.php',
                             data: {'phone': phone},
                             success: function (data) {
-                                alert(data);
+                                //alert(data);
 
                                     $('.phoneChangeConfirmation').append('<div class="alert alert-danger" id="" role="alert">Phone Number Updated.</div>');
 

@@ -13,7 +13,7 @@ function getCourseName($userid){
 }
 function enrolmentProgress($user){
     global $pdo;
-    $query = "SELECT * FROM `of_enrolment` WHERE `usrid` =:userid";
+    $query = "SELECT * FROM `of_enrolment` WHERE `usrid` =:userid order by `of_enrolment`.id desc limit 1";
     $stmt = $pdo->prepare($query);
     $stmt->bindParam('userid',  $user, PDO::PARAM_STR);
     $stmt->execute();

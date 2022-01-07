@@ -71,9 +71,9 @@ include '../config.php';
             $enrolmentId=$rownew1["id"];
 
             //update user table
-            $sql = "UPDATE `user` SET `courses`=?,`enrolmentId`=? WHERE id=?";
+            $sql = "UPDATE `user` SET `courses`=?,`enrolmentId`=?,`courseid`=? WHERE id=?";
             $stmt= $pdo->prepare($sql);
-            $stmt->execute([$_POST["newcourse"],$enrolmentId,$userId]);
+            $stmt->execute([$_POST["newcourse"],$enrolmentId,$courseId,$userId]);
 
         }
 
