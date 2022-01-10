@@ -485,7 +485,7 @@ class users{
             include "config.php";
 
 
-            $query2 = "SELECT * FROM `of_enrolment` , `user` WHERE of_enrolment.usrid = user.id AND user.role = 3 ORDER BY of_enrolment.id DESC";
+            $query2 = "SELECT * FROM `of_enrolment` JOIN `user` JOIN `courses` ON of_enrolment.usrid= user.id AND of_enrolment.courseid=courses.id ORDER BY of_enrolment.id DESC";
             $stmt2 = $pdo->prepare($query2);
             //$stmt2->bindParam('userId', $userId, PDO::PARAM_STR);
             $stmt2->execute();
@@ -536,7 +536,7 @@ class users{
                 echo '<td >' . $data["uqid"] . '</td>';
                 echo '<td>' . $data["firstname"] .' ' .$data["lastname"] . '</td>';
                 echo '<td> +61'.$data["phone"].'</td>';
-                echo '<td>'.$data["courses"].'</td>';
+                echo '<td>'.$data["course"].'</td>';
                 echo '<td>'.$data["campus"].'</td>';
                 $course=getStudentCourse($data["courses"]);
 
@@ -568,7 +568,7 @@ class users{
 
               //  echo $submission;
             /*    if (get_enrolmentStatus($data["uqid"]) != 1){*/
-                    echo '<td><a href="index.php?page=20&userid='.$data['id'].'" target="_blank"></ahref><i class="fa fa-link" style="color:blue;"></i></a>';
+                    echo '<td><a href="index.php?page=20&$courseId='.$data['id'].'" target="_blank"></ahref><i class="fa fa-link" style="color:blue;"></i></a>';
                     echo '<a href="index.php?page=14&submission='.$submission.'" class="btn btn-warning" onclick="showHide2();">Sync</a></td></tr>';
               /*  }else{
                     echo '<td><a href="index.php?page=20&userid='.$data['id'].'" target="_blank"></ahref><i class="fa fa-link" style="color:blue;"></i></a></td></tr>';
@@ -630,7 +630,7 @@ class users{
                         $.ajax({
                             type: 'POST',
                             url: 'thankyou.php',
-                            data: {formvalue: val, userId:id},
+                            data: {formvalue: val, enrolmentId:id},
                             success: function (data) {
                                 if (data == "YES") {
                                     //$ele.fadeOut().remove();
@@ -662,7 +662,7 @@ class users{
                         $.ajax({
                             type: 'POST',
                             url: 'thankyou.php',
-                            data: {formvalue: val, userId:id},
+                            data: {formvalue: val, enrolmentId:id},
                             success: function (data) {
                                 if (data == "YES") {
                                     //$ele.fadeOut().remove();
@@ -689,12 +689,12 @@ class users{
         global $url,$pdo, $enrolmentForm, $usiForm, $skillForm, $documentForm, $usitransForm,$seclln ;
         $role =  $_SESSION['role'];
         get_breadcrumbs($page);
-        $userId= $_GET['userid'];
+        $courseId= $_GET['$courseId'];
         $api=get_setting_api();
 
-        $query2 = "SELECT * FROM `of_enrolment` JOIN `user` ON of_enrolment.usrid= user.id AND of_enrolment.usrid=:userId ORDER BY of_enrolment.id";
+        $query2 = "SELECT * FROM `of_enrolment` JOIN `user` ON of_enrolment.usrid= user.id AND of_enrolment.courseid=:courseId";
         $stmt2 = $pdo->prepare($query2);
-        $stmt2->bindParam('userId', $userId, PDO::PARAM_STR);
+        $stmt2->bindParam('courseId', $courseId, PDO::PARAM_STR);
         $stmt2->execute();
         $row2   = $stmt2->fetchAll(PDO::FETCH_ASSOC);
         $std_id = $row2[0]['uqid'];
@@ -725,6 +725,9 @@ class users{
                     <div class="col-md-8">
                         <div class="row">
                             <?php
+                            //echo '<pre>';
+                            //print_r($row2);
+                            //echo '<pre>';
                             /** Table Start */
                             print_table_header();
                             echo '<thead>
