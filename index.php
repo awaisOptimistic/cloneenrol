@@ -264,6 +264,13 @@ global  $url, $enrolmentForm, $usiForm, $skillForm, $documentForm, $usitransForm
             }else{
                 echo '<script type="text/javascript">window.location.href = "'.$url.'"</script>';
             }
+        }else if($page == 27){
+            if($role==$admin || $role == $coordinator ){
+                $users = new users();
+                $users->hundred_percent_users_progress_report($page);
+            }else{
+                echo '<script type="text/javascript">window.location.href = "'.$url.'"</script>';
+            }
         }else{
             $forms = new forms();
             $forms->student_form($role);

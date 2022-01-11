@@ -427,9 +427,7 @@ class users{
         <?php
     }
 
-
-    /*** Student Progress Page 20 ***/
-    public function current_users_progress_report($page){
+    function hundred_percent_users_progress_report($page){
         $role =  $_SESSION['role'];
         global $pdo;
         get_breadcrumbs($page);
@@ -510,6 +508,278 @@ class users{
                         <th>Skill First</th>
                         <th>PTR</th>
                         <th>Details</th>
+                        <th>Wisenet Status</th>
+                    </tr>
+               </thead>
+               <tfoot>
+                    <tr>
+                        <th>S.No.</th>
+                        <th>Student Id</th>
+                        <th>Full Name</th>                
+                        <th>Phone</th>
+                        <th>Course</th>
+                        <th>Campus</th>
+                        <th>Enrolment Form</th>
+                        <th>Documents</th>
+                        <th>USI</th>
+                        <th>LLN</th>
+                        <th>Skill First</th>
+                        <th>PTR</th>
+                        <th>Details</th>
+                        <th>Wisenet Status</th>
+                    </tr>
+               </tfoot>
+               <tbody>';
+
+            foreach ($row2 as $data){
+
+                $course=getStudentCourse($data["course"]);
+                $check=checkForhunderdPercent($data,$course);
+                if($check==1){
+                    echo '<tr>';
+                    echo '<td ">'.$i.'</td>';
+                    echo '<td >' . $data["uqid"] . '</td>';
+                    echo '<td>' . $data["firstname"] .' ' .$data["lastname"] . '</td>';
+                    echo '<td> +61'.$data["phone"].'</td>';
+                    echo '<td>'.$data["course"].'</td>';
+                    echo '<td>'.$data["campus"].'</td>';
+                    if($course==2){
+                        echo '<td>'.currentEnrolmentStatus($data).'</td>';
+                        echo '<td>'.currentDocStatus($data).'</td>';
+                        echo '<td>-</td>';
+                        echo '<td>-</td>';
+                        echo '<td>-</td>';
+                        echo '<td>-</td>';
+                    }else{
+                        echo '<td>'.currentEnrolmentStatus($data).'</td>';
+                        //docs
+                        echo '<td>'.currentDocStatus($data).'</td>';
+
+                        //usi
+                        echo '<td>'.currentusiStatus($data).'</td>';
+
+                        //lln
+                        echo '<td>'.currentllnStatus($data).'</td>';
+
+                        //skill first
+                        echo '<td>'.currentskillfirstStatus($data).'</td>';
+
+                        //ptr
+                        echo '<td>'.currentptrStatus($data).'</td>';
+
+
+                    }
+
+
+                    $submission = getSubmissionID($data["uqid"]);
+
+                    //  echo $submission;
+                    /*    if (get_enrolmentStatus($data["uqid"]) != 1){*/
+                    echo '<td><a href="index.php?page=20&$courseId='.$data['id'].'" target="_blank"></ahref><i class="fa fa-link" style="color:blue;"></i></a>';
+                    echo '<a href="index.php?page=14&submission='.$submission.'" class="btn btn-warning" onclick="showHide2();">Sync</a></td>
+                    ';
+                    //wisenet
+                    echo '<td>'.$data["usrid"].'</td>';
+                    echo'</tr>';
+                    /*  }else{
+                          echo '<td><a href="index.php?page=20&userid='.$data['id'].'" target="_blank"></ahref><i class="fa fa-link" style="color:blue;"></i></a></td></tr>';
+                      }*/
+
+                    $i++;
+                }
+
+            }
+                print_table_footer();
+
+        }
+        else{
+            echo '<h1 class="h1 mb-4 text-gray-800" style="text-align: center; padding-top: 30px;">Current Students </h1>';
+            print_table_header();
+            echo '<thead>
+                    <tr>
+                        <th>S.No.</th>
+                        <th>Id</th>
+                        <th>Full Name</th>                    
+                        <th>Enrolment Form</th>
+                        <th>Documents</th>
+                        <th>USI</th>
+                        <th>LLN</th>
+                        <th>Skill First</th>
+                        <th>PTR</th>
+                        <th>Details</th>
+                    </tr>
+               </thead>
+               <tfoot>
+                    <tr>
+                        <th>S.No.</th>
+                        <th >Id</th>
+                        <th>Full Name</th>                   
+                        <th>Enrolment Form</th>
+                        <th>Documents</th>
+                        <th>USI</th>
+                        <th>LLN</th>
+                        <th>Skill First</th>
+                        <th>PTR</th>
+                        <th>Details</th>
+                    </tr>
+               </tfoot>
+               <tbody>';
+
+            $row = get_StudentProgressForCoordinator();
+            print_table_footer();
+        }
+        ?>
+        <script>
+
+            //checked100
+            $(function(){
+                $(document).on('change','.form-switch',function() {
+                    if (confirm("Do you want to mark this activity as checked?")) {
+                        var id = $(this).attr('id');
+                        var val=$(this).attr('value');
+                        var $ele = $(this).parent().parent();
+                        var $ele2 = $(this);
+                        //console.log(id);
+                        //console.log(val);
+                        $.ajax({
+                            type: 'POST',
+                            url: 'thankyou.php',
+                            data: {formvalue: val, enrolmentId:id},
+                            success: function (data) {
+                                if (data == "YES") {
+                                    //$ele.fadeOut().remove();
+                                    //$ele.append('<i class="fab fa-medium-m" style="color:orange;" data-toggle="tooltip" data-placement="top" title=" atha rakh"></i>');
+                                    //$id.html("welcome");
+                                    $ele2.html('<i class="fas fa-archive" style="color:green;" data-toggle="tooltip" data-placement="top" title="Marked Completed"></i>');
+                                    //alert("Mark completed successfully");
+                                    //window.location.reload();
+                                    //$('.form-switch').remove();
+                                } else {
+                                    alert(data);
+                                    //window.location.reload();
+                                    //alert("Invalid User id")
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+            $(function(){
+                $(document).on('click','.btn.btn-dark.btn-circle.btn-sm',function() {
+                    if (confirm("Do you want to mark this activity as completed ?")) {
+                        var id = $(this).attr('id');
+                        var val=$(this).attr('value');
+                        var $ele = $(this).parent().parent();
+                        var $ele2 = $(this).parent();
+                        // console.log(id);
+                        //console.log(val);
+                        $.ajax({
+                            type: 'POST',
+                            url: 'thankyou.php',
+                            data: {formvalue: val, enrolmentId:id},
+                            success: function (data) {
+                                if (data == "YES") {
+                                    //$ele.fadeOut().remove();
+                                    $ele2.html('<i class="fab fa-medium-m" style="color:orange;"></i>');
+                                    //alert("Mark completed successfully");
+                                    //window.location.reload();
+                                } else {
+                                    alert(data);
+                                    window.location.reload();
+                                    alert("Invalid User id");
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+
+        </script>
+
+        <?php
+    }
+
+    /*** Student Progress Page 20 ***/
+    public function current_users_progress_report($page){
+        $role =  $_SESSION['role'];
+        global $pdo;
+        get_breadcrumbs($page);
+        ?>
+        <script>
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip()
+            })
+        </script>
+        <?php
+        /* Begin Page Content */
+        echo '<div class="container-fluid">';
+
+        /*  Page Heading */
+        if($role == 1 || $role==2) {
+            echo '<h1 class="h1 mb-4 text-gray-800" style="text-align: center; padding-top: 30px;">Students Progress</h1> ';
+            echo '<div class="row">
+            <div class="col-lg-3">
+            <div class="card">
+                      <div class="card-body p-2 text-center">
+                        <div class="h1 m-0"><i class="fa fa-check" style="color:green;"></i></div>
+                        <div class="text-muted mb-3">Reviewed by coordinator</div>
+                      </div>
+                    </div>
+            </div>
+            <div class="col-lg-3">
+            <div class="card">
+                      <div class="card-body p-2 text-center">
+                        <div class="h1 m-0"><i class="fab fa-medium-m" style="color:orange;"></i></div>
+                        <div class="text-muted mb-3">Marked Manually on paper</div>
+                      </div>
+                    </div>
+            </div>
+            <div class="col-lg-3">
+            <div class="card">
+                      <div class="card-body p-2 text-center">
+                        <div class="h1 m-0"><i class="fas fa-globe" style="color:orange;"></i></div>
+                        <div class="text-muted mb-3">Submitted Online</div>
+                      </div>
+                    </div>
+            </div>
+            <div class="col-lg-3">
+            <div class="card">
+                      <div class="card-body p-2 text-center">
+                        <div class="h1 m-0"><button class="btn-dark btn-circle btn-sm"><i class="fa fa-check" style="color:white;"></i></button></div>
+                        <div class="text-muted mb-3">Mark activity as Manually completed</div>
+                      </div>
+                    </div>
+            </div>
+            </div>
+            </div>';
+
+            include "config.php";
+
+
+            $query2 = "SELECT * FROM `of_enrolment` JOIN `user` JOIN `courses` ON of_enrolment.usrid= user.id AND of_enrolment.courseid=courses.id ORDER BY of_enrolment.id DESC";
+            $stmt2 = $pdo->prepare($query2);
+            //$stmt2->bindParam('userId', $userId, PDO::PARAM_STR);
+            $stmt2->execute();
+            $row2   = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+
+            $i= 1;
+
+            print_table_header();
+            echo '<thead>
+                    <tr>
+                        <th>S.No.</th>
+                        <th>Student Id</th>
+                        <th>Full Name</th>           
+                        <th>Phone</th>
+                        <th>Course</th>
+                        <th>Campus</th>
+                        <th>Enrol</th>
+                        <th>Documents</th>
+                        <th>USI</th>
+                        <th>LLN</th>
+                        <th>Skill First</th>
+                        <th>PTR</th>
+                        <th>Details</th>
                     </tr>
                </thead>
                <tfoot>
@@ -530,53 +800,61 @@ class users{
                     </tr>
                </tfoot>
                <tbody>';
-            foreach ($row2 as $data){
-                echo '<tr>';
-                echo '<td ">'.$i.'</td>';
-                echo '<td >' . $data["uqid"] . '</td>';
-                echo '<td>' . $data["firstname"] .' ' .$data["lastname"] . '</td>';
-                echo '<td> +61'.$data["phone"].'</td>';
-                echo '<td>'.$data["course"].'</td>';
-                echo '<td>'.$data["campus"].'</td>';
-                $course=getStudentCourse($data["courses"]);
+            foreach ($row2 as $data) {
+                //echo $data["course"];
+                $course = getStudentCourse($data["course"]);
+                $check = checkForhunderdPercent($data,$course);
+                if ($check == 0) {
+                    echo '<tr>';
+                    echo '<td ">' . $i . '</td>';
+                    echo '<td >' . $data["uqid"] . '</td>';
+                    echo '<td>' . $data["firstname"] . ' ' . $data["lastname"] . '</td>';
+                    echo '<td> +61' . $data["phone"] . '</td>';
+                    echo '<td>' . $data["course"] . '</td>';
+                    echo '<td>' . $data["campus"] . '</td>';
 
-                if($course==2){
-                    echo '<td>'.currentEnrolmentStatus($data).'</td>';
-                    echo '<td>'.currentDocStatus($data).'</td>';
-                    echo '<td>-</td>';
-                    echo '<td>-</td>';
-                    echo '<td>-</td>';
-                    echo '<td>-</td>';
-                }else{
-                    echo '<td>'.currentEnrolmentStatus($data).'</td>';
-                    //docs
-                    echo '<td>'.currentDocStatus($data).'</td>';
 
-                    //usi
-                    echo '<td>'.currentusiStatus($data).'</td>';
+                    if ($course == 2) {
+                        echo '<td>' . currentEnrolmentStatus($data) . '</td>';
+                        echo '<td>' . currentDocStatus($data) . '</td>';
+                        echo '<td>-</td>';
+                        echo '<td>-</td>';
+                        echo '<td>-</td>';
+                        echo '<td>-</td>';
+                    } else {
+                        echo '<td>' . currentEnrolmentStatus($data) . '</td>';
+                        //docs
+                        echo '<td>' . currentDocStatus($data) . '</td>';
 
-                    //lln
-                    echo '<td>'.currentllnStatus($data).'</td>';
+                        //usi
+                        echo '<td>' . currentusiStatus($data) . '</td>';
 
-                    //skill first
-                    echo '<td>'.currentskillfirstStatus($data).'</td>';
+                        //lln
+                        echo '<td>' . currentllnStatus($data) . '</td>';
 
-                    //ptr
-                    echo '<td>'.currentptrStatus($data).'</td>';
+                        //skill first
+                        echo '<td>' . currentskillfirstStatus($data) . '</td>';
+
+                        //ptr
+                        echo '<td>' . currentptrStatus($data) . '</td>';
+                    }
+                    $submission = getSubmissionID($data["uqid"]);
+
+                    //  echo $submission;
+                    /*    if (get_enrolmentStatus($data["uqid"]) != 1){*/
+                    echo '<td><a href="index.php?page=20&$courseId=' . $data['id'] .
+                            '" target="_blank"></ahref><i class="fa fa-link" style="color:blue;"></i></a>';
+                    echo '<a href="index.php?page=14&submission=' . $submission .
+                            '" class="btn btn-warning" onclick="showHide2();">Sync</a></td></tr>';
+                    /*  }else{
+                          echo '<td><a href="index.php?page=20&userid='.$data['id'].'" target="_blank"></ahref><i class="fa fa-link" style="color:blue;"></i></a></td></tr>';
+                      }*/
+
+                    $i++;
                 }
-                $submission = getSubmissionID($data["uqid"]);
-
-              //  echo $submission;
-            /*    if (get_enrolmentStatus($data["uqid"]) != 1){*/
-                    echo '<td><a href="index.php?page=20&$courseId='.$data['id'].'" target="_blank"></ahref><i class="fa fa-link" style="color:blue;"></i></a>';
-                    echo '<a href="index.php?page=14&submission='.$submission.'" class="btn btn-warning" onclick="showHide2();">Sync</a></td></tr>';
-              /*  }else{
-                    echo '<td><a href="index.php?page=20&userid='.$data['id'].'" target="_blank"></ahref><i class="fa fa-link" style="color:blue;"></i></a></td></tr>';
-                }*/
-
-                $i++;
             }
             print_table_footer();
+
         }
         else{
             echo '<h1 class="h1 mb-4 text-gray-800" style="text-align: center; padding-top: 30px;">Current Students </h1>';

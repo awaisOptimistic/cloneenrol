@@ -1826,6 +1826,9 @@ function get_breadcrumbs($page){
     }elseif($page == 25){
         echo ' <li><i class="fa fa-angle-right"></i></li>
                                 <li><a href="'.$url.'/index.php?page=25">Edit Profile</a></li>';
+    }elseif($page == 27){
+        echo ' <li><i class="fa fa-angle-right"></i></li>
+                                <li><a href="'.$url.'/index.php?page=27">100% Enrolment</a></li>';
     }else{
         echo '<li><i class="fa fa-angle-right"></i></li>';
     }
@@ -1930,6 +1933,40 @@ function get_formResponse($formname,$std_Id){
         echo '<td>Greater<br>Shepparton</td>';
     }
 }*/
+
+function checkForhunderdPercent($data,$course){
+    //echo $course;
+    //echo properArrayCheck($data["enrolReview"]);
+    $enrol= properArrayCheck($data["enrolReview"]);
+    $docs= properArrayCheck($data["documentReview"]);
+    $usi= properArrayCheck($data["usiReview"]);
+    $lln= properArrayCheck($data["llnReview"]);
+    $skillfirst= properArrayCheck($data["skillReview"]);
+    $ptr= properArrayCheck($data["ptrReview"]);
+    if($course!=2){
+        if($enrol==1 && $docs==1 && $usi==1 && $lln==1 && $skillfirst==1 && $ptr==1){
+            $result=1;
+        }else{
+            $result=0;
+        }
+    }else{
+        if($enrol==1 && $docs==1){
+            $result=1;
+        }else{
+            $result=0;
+        }
+    }
+    return $result;
+}
+function properArrayCheck($a){
+    $rs = json_decode($a,true);
+    if($rs!=0 && is_array($rs) || !empty($rs)){
+        return 1;
+    }else{
+        return 0;
+    }
+}
+
 function arrayCheck($data){
     $rs = json_decode($data,true);
     return $rs;
