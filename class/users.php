@@ -1461,13 +1461,13 @@ class users{
                     event.preventDefault();
 
                     if (errorCount==0) {
-                        alert("ok");
+                        //alert("ok");
                         $.ajax({
                             type: 'POST',
                             url: 'lib/userlib.php',
                             data: {'newcourse': courseselection,'govsubornot':govsubornot},
                             success: function (data) {
-                                alert(data);
+                                //alert(data);
                             }
                         });
                     }
@@ -1635,7 +1635,7 @@ class users{
   <br>
                     <div class="CourseChangeMessage"></div>
   ';
-                var_dump($course);
+                //var_dump($course);
         if($enrolmentProgress['enrolForm']==NULL){
 
                 echo '
