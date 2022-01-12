@@ -260,8 +260,8 @@ if (isset($_POST['userid'])) {
                                     </div>
                                     <div class="form-group row" style="padding-top:10px;">
                                         <div class="col-md-12">
-                                            <select id="choices-multiple-remove-button" placeholder="Select courses you are interested in" multiple>
-
+                                            <select id="courseSelect" class="form-select" aria-label="Default select example">
+                                                <option selected>Select courses you are interested in</option>
                                                 <option value="CHC33015 Certificate III in Individual Support">CHC33015 Certificate III in Individual Support (Aged Care)</option>
                                                 <option value="CPP20218 Certificate II in Security Operations">CPP20218 Certificate II in Security Operations</option>
                                                 <option value="BH">Baton & Handcuff</option>
@@ -279,6 +279,7 @@ if (isset($_POST['userid'])) {
                                                 <option value="CHC43015 Certificate IV in Ageing Support">CHC43015 Certificate IV in Ageing Support</option>
                                                 <option value="CHC43115 Certificate IV in Disability">CHC43115 Certificate IV in Disability</option>
                                             </select>
+                                            <div id="courseerror" style="margin-left: 20px;"></div>
                                             <?php
                                             $courses = explode(",", $row['courses']);
                                             //var_dump($courses);
@@ -304,7 +305,16 @@ if (isset($_POST['userid'])) {
                                         echo '<input type="text" id="keepSameCourses" name="keepSameCourses" value="'.$row["courses"].'" placeholder="'.$row["courses"].'" style="display:none;">';
                                         ?>
                                     </div>
+                                    <div class="form-group row">
+                                        <select class="browser-default custom-select form-select" id="govsubornot">
+                                            <option value="funding" selected>Funding Type</option>
+                                            <option value="1">Government Funded</option>
+                                            <option value="0">Fee for Service</option>
+                                        </select>
+                                        <div id="fundingerror" style="margin-left: 20px;"></div>
+                                    </div>
                                 </div>
+
                                 <div class="form-footer">
                                     <button type="submit" name="submitBtnLogin" id="submitBtnLogin" class="btn btn-primary w-100">Update User</button>
 
