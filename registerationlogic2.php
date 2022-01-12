@@ -1,6 +1,9 @@
 <?php
 include('config.php');
 include('lib/lib.php');
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 if (isset($_POST['sentOTP'])){
     $mobile_number = $_POST['sentOTP'];
     $numbers = array($mobile_number);
@@ -138,6 +141,8 @@ if (isset($_POST['sentOTP'])){
             $uqid=$datanew['uqid'];
             $acceptiondate=date("Y-m-d");*/
 
+
+
             $query4  = "INSERT INTO `llnusers`( `firstname`, `lastname`, `email`, `password`, `uqid`)VALUES (:firstname, :lastname, :email, :password, :uqid)";
             $stmt4 = $pdo->prepare($query4);
             $stmt4->bindParam('firstname', $FirstName, PDO::PARAM_STR);
@@ -151,18 +156,29 @@ if (isset($_POST['sentOTP'])){
             //send_mail_tostudent($name,$uqid,$Email);
 
             /*** Add record in of_enrolment database ***/
-            $query5  = "INSERT INTO `of_enrolment`(`usrid`, `std_id`)VALUES ((SELECT id FROM user WHERE uqid = '$uqid'),'$uqid' )";
-            $stmt5 = $pdo->prepare($query5);
-            $stmt5->bindParam('uqid', $uqid, PDO::PARAM_STR);
-            $stmt5->execute();
+            //$courseId $datanew['id'] $datanew['uqid']
+            echo $courseId.' '.$datanew['id'].' '. $datanew['uqid'];
+
+            $query44  = "INSERT INTO `of_enrolment`( `usrid`, `std_id`,`courseid`)VALUES (:userid,:stdid,:courseid)";
+            $stmt44 = $pdo->prepare($query44);
+            $stmt44->bindParam('userid', $datanew['id'], PDO::PARAM_STR);
+            $stmt44->bindParam('stdid', $datanew['uqid'], PDO::PARAM_STR);
+            $stmt44->bindParam('courseid', $courseId, PDO::PARAM_STR);
+            $stmt44->execute();
+
+            //$query55  = "INSERT INTO `of_enrolment`(`usrid`, `std_id`)VALUES ((SELECT id FROM user WHERE uqid = '$uqid'),'$uqid' )";
+            //$stmt55 = $pdo->prepare($query55);
+            //$stmt55->bindParam('uqid', $uqid, PDO::PARAM_STR);
+            //$stmt55->execute();
+
             /***********
              *
              * Code changes start
              *
              */
-            $updateUserForCourseInEnrolment = "UPDATE `of_enrolment` SET courseid=? WHERE usrid=?";
-            $updateUserForCourse= $pdo->prepare($updateUserForCourseInEnrolment);
-            $result = $updateUserForCourse->execute([$courseId,$userId]);
+            //$updateUserForCourseInEnrolment = "UPDATE `of_enrolment` SET courseid=? WHERE usrid=?";
+            //$updateUserForCourse= $pdo->prepare($updateUserForCourseInEnrolment);
+            //$result = $updateUserForCourse->execute([$courseId,$userId]);
 
             //Get Latest enrolment id and insert into the user
             /*** Add record in of_enrolment database ***/
@@ -184,7 +200,7 @@ if (isset($_POST['sentOTP'])){
              */
 
             //send_newaccount_mail_tostudent($name, $Email);
-            send_mail_tocoordinator($name,$uqid, $Email, $course);
+            //send_mail_tocoordinator($name,$uqid, $Email, $course);
             session_start();
             $_SESSION['currentSession']=1;
             $_SESSION['role']=$datanew["role"];
@@ -194,6 +210,7 @@ if (isset($_POST['sentOTP'])){
             $msg = "Log in Success!";
             session_write_close();
             send_sms_to_coordinator($name,$uqid, $Email,$course);
+            echo 'Success';
         }else{
             /***Insert Query***/
             $query  = "INSERT INTO `user`(`firstname`, `lastname`, `email`, `password`, `phone`, `role`, `verified`, `uqid`) VALUES (:firstname, :lastname, :email, :password,:phone, :roles, :verified, :uqid)";

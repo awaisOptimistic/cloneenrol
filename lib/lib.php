@@ -2908,6 +2908,15 @@ function AdminDasboard(){
 
 function StudentDashboard($row2, $security, $found,$different,$userId){
     global $pdo,$url,  $enrolmentForm, $usiForm, $skillForm, $documentForm, $usitransForm ,$seclln;
+
+    //check if course is funded or not
+    $query1 = "SELECT * FROM `courses`  WHERE `id`=:courseid";
+    $stmt2 = $pdo->prepare($query1);
+    $stmt2->bindParam('courseid', $row2['courseid'], PDO::PARAM_STR);
+    $stmt2->execute();
+    $Govfund  = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+    var_dump($Govfund);
+
     echo "<script>
             $(document).ready(function(){
               $('[data-toggle='tooltip']').tooltip();   
@@ -2989,7 +2998,7 @@ function StudentDashboard($row2, $security, $found,$different,$userId){
         echo '<div style="text-align: center !important;"><img src="img/completed task.png"  style="width: 30%;"> <br><h1> Thank You!</h1><br><p>Do you want to enrol for another course?</p><button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg" style="margin-bottom: 20px;" id="newenrolment">Start a new enrolment</button>
 </div>';
     }else{
-        echo '<h1 class="mb-4 text-gray-800" style="text-align: center; padding-top: 30px;">Dashboard</h1>';
+        echo '<h1 class="mb-4 text-gray-800" style="text-align: center; padding-top: 30px;">Dashboard ->'. $Govfund.'</h1>';
         /***
          *
          * Only Security course

@@ -333,20 +333,13 @@
                         type: "POST",
                         data: info,
                         success: function(data){
-                            //alert(data);
-                            var a = data.includes("Success");
-                            if (a) {
+                            alert(data);
                                 $("#messageblock").css("display","block");
                                 $('#msg').html(data);
                                 $('#registrationform').find('input').val('')
-                                window.setTimeout(function() {
-                                    window.location.href='login.php';
-                                }, 500);
-                            }
-                            if(data.includes("Error")){
-                                $("#errorblock").css("display","block");
-                                $('#errormsg').html(data);
-                            }
+                                window.location.href='login.php';
+
+
                         },error: function(xhr, status, error) {
                             var err = eval("(" + xhr.responseText + ")");
                             alert(err.Message);
