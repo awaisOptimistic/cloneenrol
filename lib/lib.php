@@ -2915,7 +2915,12 @@ function StudentDashboard($row2, $security, $found,$different,$userId){
     $stmt2->bindParam('courseid', $row2['courseid'], PDO::PARAM_STR);
     $stmt2->execute();
     $Govfund  = $stmt2->fetchAll(PDO::FETCH_ASSOC);
-    var_dump($Govfund);
+
+    if ($Govfund==1){
+        echo 'GOV FUNDED';
+    }else{
+        echo 'Non Funded';
+    }
 
     echo "<script>
             $(document).ready(function(){
@@ -2998,12 +3003,13 @@ function StudentDashboard($row2, $security, $found,$different,$userId){
         echo '<div style="text-align: center !important;"><img src="img/completed task.png"  style="width: 30%;"> <br><h1> Thank You!</h1><br><p>Do you want to enrol for another course?</p><button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg" style="margin-bottom: 20px;" id="newenrolment">Start a new enrolment</button>
 </div>';
     }else{
-        echo '<h1 class="mb-4 text-gray-800" style="text-align: center; padding-top: 30px;">Dashboard ->'. $Govfund.'</h1>';
+        echo '<h1 class="mb-4 text-gray-800" style="text-align: center; padding-top: 30px;">Dashboard</h1>';
         /***
          *
          * Only Security course
          *
          ***/
+
         if($security==1){
 
             echo '<div style="border: 2px red solid; text-align: center;font-size: 24px;">
@@ -3018,6 +3024,8 @@ function StudentDashboard($row2, $security, $found,$different,$userId){
             //////////////////////////////////////
             ///// ENROLMENT AGREEMENT FORM///////
             /////////////////////////////////////
+            enrolmentForm();
+
             echo '<div class="card">';
             echo '
                 <img class="card-img-top" src="https://images.pexels.com/photos/1438081/pexels-photo-1438081.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" alt="Card image cap">

@@ -24,9 +24,10 @@ include '../config.php';
 
         if($rownew['enrolForm']==NULL){
             //update course name in course table
-            $sql = "UPDATE `courses` SET `course`=? WHERE id=?";
+            $sql = "UPDATE `courses` SET `course`=?,`fundingType`=? WHERE id=?";
             $stmt= $pdo->prepare($sql);
-            $stmt->execute([$_POST["newcourse"],$rownew["courseid"]]);
+            $stmt->execute([$_POST["newcourse"],$_POST["govsubornot"],$rownew["courseid"]]);
+
             //update course name in user table
             $sql = "UPDATE `user` SET `courses`=? WHERE id=?";
             $stmt= $pdo->prepare($sql);

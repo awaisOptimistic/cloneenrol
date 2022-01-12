@@ -1425,25 +1425,49 @@ class users{
         ?>
         <script>
             $(function() {
+                //courseSelect
+                $( "#courseSelect" ).change(function() {
+
+                    var val=$("#courseSelect option:selected").text();
+                    if(val.indexOf('HLTAID') > -1||val.indexOf('CPCCWHS1001') > -1 ||val.indexOf('Building and Construction') > -1 ){
+                        //$('#govsubornot').select;
+                        $('#govsubornot  option:eq(2)').prop('selected', true);
+                        $("#govsubornot").attr("disabled", "disabled");
+                    }else{
+                        $("#govsubornot").removeAttr("disabled");
+                        //alert( val );
+                    }
+
+                });
 
                 $(document).on('click', '.startanewcourse', function (event) {
-                    //alert('working');
+                    var errorCount=0;
+                    var courseselection=$("#courseSelect option:selected").text();
+                    var govsubornot=$("#govsubornot option:selected").val();
+
+                    if (courseselection=="" || courseselection=="Select courses you are interested in"){
+                        $('#courseerror').html('<div class="error" id="" style="padding-top:10px; margin:0px;"><p class="error" style="color:red; font-size:12px;margin:0px;">Please select course/courses</p></div>');
+                        errorCount++;
+                    }else{
+                        $('#courseerror').html('');
+                    }
+
+                    if (govsubornot=="" || govsubornot=="Funding Type"){
+                        $('#fundingerror').html('<div class="error" id="" style="padding-top:10px; margin:0px;"><p class="error" style="color:red; font-size:12px;margin:0px;">Please select funding type</p></div>');
+                        errorCount++;
+                    }else{
+                        $('#fundingerror').html('');
+                    }
                     event.preventDefault();
-                    var val = $("#changeOfCourse").find(":selected").text();
-                    if (val != "Open this select menu") {
-                        //alert("ok");
+
+                    if (errorCount==0) {
+                        alert("ok");
                         $.ajax({
                             type: 'POST',
                             url: 'lib/userlib.php',
-                            data: {'newcourse': val},
+                            data: {'newcourse': courseselection,'govsubornot':govsubornot},
                             success: function (data) {
                                 alert(data);
-
-                                    $("#oldCourseSpan").remove();
-                                    $("#currentcourse").append('<span style="font-size: 16px;" id="oldCourseSpan">'+val+'</span>');
-                                    $("#coursechangemessage").remove();
-                                    $('.CourseChangeMessage').append('<div class="alert alert-success" id="coursechangemessage" role="alert">Course changed.</div>');
-                                    $('.addANewCourseCard').remove();
                             }
                         });
                     }
@@ -1611,27 +1635,47 @@ class users{
   <br>
                     <div class="CourseChangeMessage"></div>
   ';
+                var_dump($course);
         if($enrolmentProgress['enrolForm']==NULL){
 
                 echo '
   <div class="card-body addANewCourseCard">
             <form id="addANewCourse">
-                <select class="custom-select custom-select-lg mb-3" id="changeOfCourse" style="padding: 20px;font-size: 16px;">
-                        <option selected>Open this select menu</option>
-                        <option value="CHC33015 Certificate III in Individual Support">CHC33015 Certificate III in Individual Support (Aged Care)</option>
-                        <option value="CPP20218 Certificate II in Security Operations">CPP20218 Certificate II in Security Operations</option>
-                        <option value="CHC30113 Certificate III in Early Childhood Education and Care">CHC30113 Certificate III in Early Childhood Education and Care</option>
-                        <option value="CHC50113 Diploma of Early Childhood Education and Care">CHC50113 Diploma of Early Childhood Education and Care</option>
-                        <option value="HLTAID009 Provide cardiopulmonary resuscitation">HLTAID009 Provide cardiopulmonary resuscitation</option>
-                        <option value="HLTAID010 Provide basic emergency life support">HLTAID010 Provide basic emergency life support</option>
-                        <option value="HLTAID011 Provide First Aid">HLTAID011 Provide First Aid</option>
-                        <option value="HLTAID012 Provide First Aid in an education and care setting">HLTAID012 Provide First Aid in an education and care setting</option>
-                        <option value="CPCCWHS1001 Prepare to work safely in the Construction Industry">CPCCWHS1001 Prepare to work safely in the Construction Industry</option>
-                        <option value="CHC40213 Certificate IV in Education Support">CHC40213 Certificate IV in Education Support</option>
-                        <option value="CHC43015 Certificate IV in Ageing Support">CHC43015 Certificate IV in Ageing Support</option>
-                        <option value="CHC43115 Certificate IV in Disability">CHC43115 Certificate IV in Disability</option>
-                    </select>
-            <br>
+               <div class="form-group row" style="padding-top:20px;margin-bottom: 10px;">
+                        <div class="col-md-6">
+                            <select id="courseSelect" class="form-select" aria-label="Default select example">
+                                <option selected>Select courses you are interested in</option>
+                                <option value="CHC33015 Certificate III in Individual Support">CHC33015 Certificate III in Individual Support (Aged Care)</option>
+                                <option value="CPP20218 Certificate II in Security Operations">CPP20218 Certificate II in Security Operations</option>
+                                <option value="BH">Baton & Handcuff</option>
+                                <option value="CRO">Control Room Operation</option>
+                                <option value="CHC30113 Certificate III in Early Childhood Education and Care">CHC30113 Certificate III in Early Childhood Education and Care</option>
+                                <option value="CHC50113 Diploma of Early Childhood Education and Care">CHC50113 Diploma of Early Childhood Education and Care</option>
+                                <option value="HLTAID009 Provide cardiopulmonary resuscitation">HLTAID009 Provide cardiopulmonary resuscitation</option>
+                                <option value="HLTAID010 Provide basic emergency life support">HLTAID010 Provide basic emergency life support</option>
+                                <option value="HLTAID011 Provide First Aid">HLTAID011 Provide First Aid</option>
+                                <option value="HLTAID012 Provide First Aid in an education and care setting">HLTAID012 Provide First Aid in an education and care setting</option>
+                                <option value="CPC40110 Certificate lV in Building and Construction">CPC40110 Certificate lV in Building and Construction (Building)</option>
+                                <option value="CPC50210 Diploma of Building and Construction">CPC50210 Diploma of Building and Construction (Building)</option>
+                                <option value="CPCCWHS1001 Prepare to work safely in the Construction Industry">CPCCWHS1001 Prepare to work safely in the Construction Industry</option>
+                                <option value="CHC40213 Certificate IV in Education Support">CHC40213 Certificate IV in Education Support</option>
+                                <option value="CHC43015 Certificate IV in Ageing Support">CHC43015 Certificate IV in Ageing Support</option>
+                                <option value="CHC43115 Certificate IV in Disability">CHC43115 Certificate IV in Disability</option>
+                            </select>
+                            <div id="courseerror" style="margin-left: 20px;"></div>
+                        </div>
+                    </div>
+                    <div class="row" style="padding: 10px;">
+                        <div class="form-group col-md-6">
+                        <select class="browser-default custom-select form-select" id="govsubornot" >
+                            <option value="funding" selected>Funding Type</option>
+                            <option value="1">Government Funded</option>
+                            <option value="0">Fee for Service</option>
+                        </select>
+                        <div id="fundingerror" style="margin-left: 20px;"></div>
+                    </div>
+                    </div>
+                    
                     <button type="submit" class="btn btn-primary startanewcourse" style="padding: 20px;font-size: 16px;">Submit</button>
                     
         </form>
