@@ -167,19 +167,6 @@
                 }
             });
 
-            $('#choices-multiple-remove-button').change(function(){
-                var select = document.getElementById('choices-multiple-remove-button');
-                var selected = [...select.options]
-                    .filter(option => option.selected)
-                    .map(option => option.value);
-                if(selected=="" || role==null){
-                    $('#multichoicerror').remove();
-                    $('#choices-multiple-remove-button').after('<div class="error" id="multichoicerror" style="padding-top:10px; margin:0px;"><p class="error" style="color:red; font-size:12px;margin:0px;">Please select course/courses</p></div>');
-                }else {
-                    $('#multichoicerror').remove();
-                }
-            });
-
             $('#source').change(function(){
                 var mediaSource=$("#source option:selected").text();
                 if(mediaSource=="How did you find us?"){
@@ -189,6 +176,22 @@
                     $('#sourceerror').remove();
                 }
             });
+
+            //courseSelect
+            $( "#courseSelect" ).change(function() {
+
+                var val=$("#courseSelect option:selected").text();
+                if(val.indexOf('HLTAID') > -1||val.indexOf('CPCCWHS1001') > -1 ||val.indexOf('Building and Construction') > -1 ){
+                    //$('#govsubornot').select;
+                    $('#govsubornot  option:eq(2)').prop('selected', true);
+                    $("#govsubornot").attr("disabled", "disabled");
+                }else{
+                    $("#govsubornot").removeAttr("disabled");
+                    //alert( val );
+                }
+
+            });
+
 
             $('#registrationform').submit(function(e) {
                 e.preventDefault();
@@ -275,17 +278,29 @@
                 }else if(password==repeatPassword){
                     $('#passwordError').remove();
                 }
-                var select = document.getElementById('choices-multiple-remove-button');
-                var selected = [...select.options]
-                    .filter(option => option.selected)
-                    .map(option => option.value);
-                if(selected=="" || role==null){
-                    $('#multichoicerror').remove();
-                    $('#choices-multiple-remove-button').after('<div class="error" id="multichoicerror" style="padding-top:10px; margin:0px;"><p class="error" style="color:red; font-size:12px;margin:0px;">Please select course/courses</p></div>');
+
+
+
+                //courseerror fundingerror
+
+
+                var courseselection=$("#courseSelect option:selected").text();
+                var govsubornot=$("#govsubornot option:selected").val();
+
+                if (courseselection=="" || courseselection=="Select courses you are interested in"){
+                    $('#courseerror').html('<div class="error" id="" style="padding-top:10px; margin:0px;"><p class="error" style="color:red; font-size:12px;margin:0px;">Please select course/courses</p></div>');
                     errorCount++;
-                }else {
-                    $('#multichoicerror').remove();
+                }else{
+                    $('#courseerror').html('');
                 }
+
+                if (govsubornot=="" || govsubornot=="Funding Type"){
+                    $('#fundingerror').html('<div class="error" id="" style="padding-top:10px; margin:0px;"><p class="error" style="color:red; font-size:12px;margin:0px;">Please select funding type</p></div>');
+                    errorCount++;
+                }else{
+                    $('#fundingerror').html('');
+                }
+
                 var mediaSource=$("#source option:selected").text();
                 if(mediaSource=="How did you find us?"){
                     $('#sourceerror').remove();
@@ -297,7 +312,7 @@
                 if(errorCount==0 && phoneVerification==0){
                     alert('You need to verify phone number to complete registeration process.');
                 }
-                if(errorCount==0 && phoneVerification==1){
+                if(errorCount==0 && phoneVerification==0){
                     var info={
                         FirstName: first_name,
                         LastName: last_name,
@@ -307,7 +322,8 @@
                         Page:page,
                         Role:3,
                         source:mediaSource,
-                        course:selected,
+                        course:courseselection,
+                        govsubornot:govsubornot,
                         ReferredBy: referred,
                         Campus: campus
                     }
@@ -317,6 +333,7 @@
                         type: "POST",
                         data: info,
                         success: function(data){
+                            //alert(data);
                             var a = data.includes("Success");
                             if (a) {
                                 $("#messageblock").css("display","block");
@@ -511,11 +528,12 @@
                             <option value="fb">Linkedin</option>
                             <option value="fb">Word of mouth</option>
                         </select>
-                    </div>
 
+                    </div>
                     <div class="form-group row" style="padding-top:20px;margin-bottom: 10px;">
                         <div class="col-md-12">
-                            <select id="choices-multiple-remove-button" placeholder="Select courses you are interested in" multiple>
+                            <select id="courseSelect" class="form-select" aria-label="Default select example">
+                                <option selected>Select courses you are interested in</option>
                                 <option value="CHC33015 Certificate III in Individual Support">CHC33015 Certificate III in Individual Support (Aged Care)</option>
                                 <option value="CPP20218 Certificate II in Security Operations">CPP20218 Certificate II in Security Operations</option>
                                 <option value="BH">Baton & Handcuff</option>
@@ -533,10 +551,19 @@
                                 <option value="CHC43015 Certificate IV in Ageing Support">CHC43015 Certificate IV in Ageing Support</option>
                                 <option value="CHC43115 Certificate IV in Disability">CHC43115 Certificate IV in Disability</option>
                             </select>
+                            <div id="courseerror" style="margin-left: 20px;"></div>
                         </div>
                     </div>
+                    <div class="form-group row">
+                        <select class="browser-default custom-select form-select" id="govsubornot">
+                            <option value="funding" selected>Funding Type</option>
+                            <option value="1">Government Funded</option>
+                            <option value="0">Fee for Service</option>
+                        </select>
+                        <div id="fundingerror" style="margin-left: 20px;"></div>
+                    </div>
                 </div>
-
+                <br>
                 <div class="mb-3">
                     <input type="text" class="form-control form-control-user" id="ReferredBy" placeholder="Referred By (Optional)" name="referredby">
                 </div>

@@ -800,6 +800,7 @@ class users{
                     </tr>
                </tfoot>
                <tbody>';
+//var_dump($row2);
             foreach ($row2 as $data) {
                 //echo $data["course"];
                 $course = getStudentCourse($data["course"]);
@@ -816,7 +817,7 @@ class users{
 
                     if ($course == 2) {
                         echo '<td>' . currentEnrolmentStatus($data) . '</td>';
-                        echo '<td>' . currentDocStatus($data) . '</td>';
+                        echo '<td>' . currentDocStatus($data) .'</td>';
                         echo '<td>-</td>';
                         echo '<td>-</td>';
                         echo '<td>-</td>';

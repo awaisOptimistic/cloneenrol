@@ -1987,6 +1987,8 @@ function manualcomplete($checkedStatus,$data,$form){
     $checkedStatus= $myJSON->userid;
     $time=$myJSON->time;
 
+
+
     if($checkedStatus!=NULL){
         if($form=="enrolForm"){
             $result=printOrangeM($data['enrolForm']).'<br>'.printGreenTick($checkedStatus,$time);
@@ -2004,9 +2006,9 @@ function manualcomplete($checkedStatus,$data,$form){
 
     }else{
         if($form=="enrolForm"){
-            $result=printOrangeM($data['enrolReview']);
+            $result=printOrangeM($data['enrolForm']);
         }else if($form=='documentForm'){
-            $result=printOrangeM($data['documentReview']);
+            $result=printOrangeM($data['documentForm']);
         }else if($form=='usiForm'){
             $result=printOrangeM($data['usiForm']);
         }else if($form=='llnForm'){
@@ -2093,7 +2095,9 @@ function currentDocStatus($data){
     $form="documentForm";
     $maybeJson=arrayCheck($data["documentForm"]);
     $checkedStatus=$data['documentReview'];
+
     if($maybeJson != 0 && !is_array($maybeJson)){
+
         $result= manualcomplete($checkedStatus,$data,$form);
     }
     else if($maybeJson!=NULL || $maybeJson!= 0){

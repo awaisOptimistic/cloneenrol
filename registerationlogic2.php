@@ -53,21 +53,14 @@ if (isset($_POST['sentOTP'])){
 
     if($role==3){
         $source=$_POST['source'];
-        $courseDraft=$_POST['course'];
+        $course=$_POST['course'];
         $i=0;
-        foreach ($courseDraft as $value){
-            if($i==0){
-                $course=$value;
-                $i++;
-            }else{
-                $course=$course.','.$value;
-            }
-        }
     }
 
     $count = userCheck($Email);
     if ($count!=1) {
         if($role==3){
+            //echo $_POST["govsubornot"];
             /***Insert Query***/
             $query  = "INSERT INTO `user`(`firstname`, `lastname`, `email`, `password`, `phone`, `source`, `campus`, `role`, `courses`, `referral`, `verified`, `uqid`) VALUES (:firstname, :lastname, :email, :password,:phone,:sources,:campus, :roles, :courses,:referred, :verified, :uqid)";
             $stmt = $pdo->prepare($query);
@@ -85,7 +78,6 @@ if (isset($_POST['sentOTP'])){
             $stmt->bindParam('uqid', $uqid, PDO::PARAM_STR);
             $stmt->execute();
             echo 'Success: User Added Successfully!';
-
 
             $query2 = "select id from `user` where `email`=:username";
             $stmt2 = $pdo->prepare($query2);
@@ -105,10 +97,11 @@ if (isset($_POST['sentOTP'])){
              *
              */
             /***Insert Query***/
-            $queryCourse  = "INSERT INTO `courses`( `userid`, `course`) VALUES (:userid,:course)";
+            $queryCourse  = "INSERT INTO `courses`( `userid`, `course`,`fundingType`) VALUES (:userid,:course,:funding)";
             $stmtCourse = $pdo->prepare($queryCourse);
             $stmtCourse->bindParam(':userid', $userId, PDO::PARAM_STR);
             $stmtCourse->bindParam(':course', $course, PDO::PARAM_STR);
+            $stmtCourse->bindParam(':funding', $_POST["govsubornot"], PDO::PARAM_STR);
             $stmtCourse->execute();
 
             $queryGetCourseId = "select id from `courses` where `userid`=:userid";
@@ -155,7 +148,7 @@ if (isset($_POST['sentOTP'])){
             $stmt4->execute();
             $name = $FirstName . " " . $LastName;
 
-            send_mail_tostudent($name,$uqid,$Email);
+            //send_mail_tostudent($name,$uqid,$Email);
 
             /*** Add record in of_enrolment database ***/
             $query5  = "INSERT INTO `of_enrolment`(`usrid`, `std_id`)VALUES ((SELECT id FROM user WHERE uqid = '$uqid'),'$uqid' )";
@@ -277,6 +270,7 @@ if (isset($_POST['sentOTP'])){
             $msg = "Log in Success!";*/
         }
     }else{
+
         echo 'Error: Email Already Registered!';
     }
 }
