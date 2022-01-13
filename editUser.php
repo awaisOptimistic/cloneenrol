@@ -16,7 +16,7 @@ if (isset($_POST['userid'])) {
         $(document).ready(function(){
             var multipleCancelButton = new Choices('#choices-multiple-remove-button', {
                 removeItemButton: true,
-                maxItemCount:1,
+                maxItemCount:3,
                 searchResultLimit:3,
                 renderChoiceLimit:100
             });
@@ -25,6 +25,22 @@ if (isset($_POST['userid'])) {
     <script src="js/sb-admin-2.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
+            //courseSelect
+            $( "#courseSelect" ).change(function() {
+
+                var val=$("#courseSelect option:selected").text();
+                if(val.indexOf('HLTAID') > -1||val.indexOf('CPCCWHS1001') > -1 ||val.indexOf('Building and Construction') > -1 ){
+                    //$('#govsubornot').select;
+                    $('#govsubornot  option:eq(2)').prop('selected', true);
+                    $("#govsubornot").attr("disabled", "disabled");
+                }else{
+                    $("#govsubornot").removeAttr("disabled");
+                    //alert( val );
+                }
+
+            });
+
+
             $('#role').change(function (){
                 var optvalue=$("#role option:selected").text();
                 if(optvalue!='Student'){
@@ -104,15 +120,34 @@ if (isset($_POST['userid'])) {
                     if($('#samecourses').is(":checked")) {
                         var selectedCourses = 'keepthesamecourses';
                     }else{
-                        var select = document.getElementById('choices-multiple-remove-button');
-                        var selectedCourses = [...select.options]
-                            .filter(option => option.selected)
-                            .map(option => option.value);
-                        if(selectedCourses=="" || role==null){
-                            $('#choices-multiple-remove-button').after('<div class="error" style="padding-top:10px; margin:0px;"><p class="error" style="color:red; font-size:12px;margin:0px;">Please select course/courses</p></div>');
+
+                        var courseselection=$("#courseSelect option:selected").val();
+                        var govsubornot=$("#govsubornot option:selected").val();
+                        var selectedCourses =courseselection;
+                        if (courseselection=="" || courseselection=="Select courses you are interested in"){
+                            $('#courseerror').html('<div class="error" id="" style="padding-top:10px; margin:0px;"><p class="error" style="color:red; font-size:12px;margin:0px;">Please select course/courses</p></div>');
                             errorCount++;
+                        }else{
+                            $('#courseerror').html('');
                         }
+
+                        if (govsubornot=="" || govsubornot=="funding"){
+
+                            $('#fundingerror').html('<div class="error" id="" style="padding-top:10px; margin:0px;"><p class="error" style="color:red; font-size:12px;margin:0px;">Please select funding type</p></div>');
+                            errorCount++;
+                        }else{
+                            $('#fundingerror').html('');
+                        }
+
                     }
+                    var govsubornot=$("#govsubornot option:selected").val();
+                    if (govsubornot=="" || govsubornot=="funding"){
+                        $('#fundingerror').html('<div class="error" id="" style="padding-top:10px; margin:0px;"><p class="error" style="color:red; font-size:12px;margin:0px;">Please select funding type</p></div>');
+                        errorCount++;
+                    }else{
+                        $('#fundingerror').html('');
+                    }
+
                     var mediaSource=$("#source option:selected").text();
                     if(mediaSource=="How did you find us?") {
                         $('#source').after('<div class="error" style="padding-top:10px; margin:0px;"><p class="error" style="color:red; font-size:12px;margin:0px;">Please select one of the options</p></div>');
@@ -120,6 +155,7 @@ if (isset($_POST['userid'])) {
                     }
                 }
                 if(errorCount==0){
+                    //alert(selectedCourses);
                     if (role==3){
                         var info={
                             userId:userId,
@@ -130,7 +166,8 @@ if (isset($_POST['userid'])) {
                             Password: Password,
                             Role: role,
                             source:mediaSource,
-                            course:selectedCourses
+                            course:selectedCourses,
+                            govsubornot:govsubornot
 
                         };
                     }else{
@@ -149,7 +186,7 @@ if (isset($_POST['userid'])) {
                         type: "POST",
                         data: info,
                         success: function(data){
-                            //alert(data);
+                            alert(data);
                             var a = data.includes("Success");
                             if (a) {
                                 $("#messageblock").css("display","block");
@@ -176,6 +213,18 @@ if (isset($_POST['userid'])) {
             <div class="">
                 <div class="">
                     <div class="">
+                        <div id="messageblock" style="padding-top:10px; display: none; ">
+                            <div class="card mb-4 py-3 border-left-success" style="padding-top:0px !important;padding-bottom:0px !important; ">
+                                <div class="card-body" style="color:#1cc88a" id="msg">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="errorblock" style="padding-top:10px; display: none; ">
+                            <div class="card mb-4 py-3 border-left-danger" style="padding-top:0px !important;padding-bottom:0px !important; ">
+                                <div class="card-body" style="color:red" id="errormsg">
+                                </div>
+                            </div>
+                        </div>
                         <form class="user" id="updateform" method="post" action="">
                             <div class="card-body">
                                 <h2 class="card-title text-center mb-4">Update User</h2>
@@ -198,14 +247,12 @@ if (isset($_POST['userid'])) {
                                 </div>
                                 <div class="form-group row mb-3">
                                     <div class="col-sm-6 mb-3 mb-sm-0 mb-3">
-                                        <label>New Password</label>
                                         <input type="password" class="form-control form-control-user"
-                                               id="Password" placeholder="**********" name="password">
+                                               id="Password" placeholder="Password" name="password">
                                     </div>
                                     <div class="col-sm-6 mb-3">
-                                        <label>Confirm New Password</label>
                                         <input type="password" class="form-control form-control-user"
-                                               id="RepeatPassword" placeholder="**********" name="repeatpassword">
+                                               id="RepeatPassword" placeholder="Repeat Password" name="repeatpassword">
                                     </div>
                                     <div id="passworderror" style="margin-left: 20px;">
                                     </div>
@@ -247,7 +294,13 @@ if (isset($_POST['userid'])) {
                                         </div>
                                     </div>
                                 </div>
-                                <div id="studentData" style="display: none;">
+                                <?php
+                                                if($row["role"]!="3"){
+                                                    echo '<div id="studentData" style="display: none;">';
+                                                }else{
+                                                    echo '<div id="studentData">';
+                                                }?>
+
                                     <div class="form-group row">
                                         <select class="browser-default custom-select form-select" id="source">
                                             <option value="How did you find us?" <?php if($row['source']=="How did you find us?") echo 'selected';?>>How did you find us?</option>
@@ -260,61 +313,63 @@ if (isset($_POST['userid'])) {
                                     </div>
                                     <div class="form-group row" style="padding-top:10px;">
                                         <div class="col-md-12">
-                                            <select id="courseSelect" class="form-select" aria-label="Default select example">
-                                                <option selected>Select courses you are interested in</option>
-                                                <option value="CHC33015 Certificate III in Individual Support">CHC33015 Certificate III in Individual Support (Aged Care)</option>
-                                                <option value="CPP20218 Certificate II in Security Operations">CPP20218 Certificate II in Security Operations</option>
-                                                <option value="BH">Baton & Handcuff</option>
-                                                <option value="CRO">Control Room Operation</option>
-                                                <option value="CHC30113 Certificate III in Early Childhood Education and Care">CHC30113 Certificate III in Early Childhood Education and Care</option>
-                                                <option value="CHC50113 Diploma of Early Childhood Education and Care">CHC50113 Diploma of Early Childhood Education and Care</option>
-                                                <option value="HLTAID009 Provide cardiopulmonary resuscitation">HLTAID009 Provide cardiopulmonary resuscitation</option>
-                                                <option value="HLTAID010 Provide basic emergency life support">HLTAID010 Provide basic emergency life support</option>
-                                                <option value="HLTAID011 Provide First Aid">HLTAID011 Provide First Aid</option>
-                                                <option value="HLTAID012 Provide First Aid in an education and care setting">HLTAID012 Provide First Aid in an education and care setting</option>
-                                                <option value="CPC40110 Certificate lV in Building and Construction">CPC40110 Certificate lV in Building and Construction (Building)</option>
-                                                <option value="CPC50210 Diploma of Building and Construction">CPC50210 Diploma of Building and Construction (Building)</option>
-                                                <option value="CPCCWHS1001 Prepare to work safely in the Construction Industry">CPCCWHS1001 Prepare to work safely in the Construction Industry</option>
-                                                <option value="CHC40213 Certificate IV in Education Support">CHC40213 Certificate IV in Education Support</option>
-                                                <option value="CHC43015 Certificate IV in Ageing Support">CHC43015 Certificate IV in Ageing Support</option>
-                                                <option value="CHC43115 Certificate IV in Disability">CHC43115 Certificate IV in Disability</option>
-                                            </select>
-                                            <div id="courseerror" style="margin-left: 20px;"></div>
                                             <?php
                                             $courses = explode(",", $row['courses']);
                                             //var_dump($courses);
                                             if($courses!=null || !empty($courses)){
                                                 echo '<h5 style="color: #49c27d;">Currently Selected Courses</h5>';
-                                                echo $row['courses'];
                                                 ?>
                                                 <div id="courseInDB">
-
+                                                    <ul id="myUL" style="text-decoration: none;">
+                                                       <?php echo '<li style="">'.$courses[0].'</li>';?>
+                                                    </ul>
                                                     <input type="checkbox" id="samecourses" name="samecourses" value="samecourses">
-                                                    <label for="samecourses"> Keep the same courses</label><br>
+                                                    <label for="samecourses"> Keep the same course</label><br>
                                                 </div>
                                                 <?php
                                             }
                                             ?>
                                         </div>
                                         <?php
-                                        foreach ($courses as $value){
-                                            echo '<script type="text/javascript">',
-                                                'var course = $("#'.$value.'").text();$("#myUL").append("<li>"+course+"</li>");',
-                                            '</script>';
-                                        }
                                         echo '<input type="text" id="keepSameCourses" name="keepSameCourses" value="'.$row["courses"].'" placeholder="'.$row["courses"].'" style="display:none;">';
                                         ?>
                                     </div>
-                                    <div class="form-group row">
-                                        <select class="browser-default custom-select form-select" id="govsubornot">
-                                            <option value="funding" selected>Funding Type</option>
-                                            <option value="1">Government Funded</option>
-                                            <option value="0">Fee for Service</option>
-                                        </select>
-                                        <div id="fundingerror" style="margin-left: 20px;"></div>
-                                    </div>
+
+                                </div>
+                            <div class="row">
+                                <div class="col-md-12" style="margin-bottom: 5px;">
+                                    <select id="courseSelect" class="form-select" aria-label="Default select example">
+                                        <option selected>Select courses you are interested in</option>
+                                        <option value="CHC33015 Certificate III in Individual Support">CHC33015 Certificate III in Individual Support (Aged Care)</option>
+                                        <option value="CPP20218 Certificate II in Security Operations">CPP20218 Certificate II in Security Operations</option>
+                                        <option value="BH">Baton & Handcuff</option>
+                                        <option value="CRO">Control Room Operation</option>
+                                        <option value="CHC30113 Certificate III in Early Childhood Education and Care">CHC30113 Certificate III in Early Childhood Education and Care</option>
+                                        <option value="CHC50113 Diploma of Early Childhood Education and Care">CHC50113 Diploma of Early Childhood Education and Care</option>
+                                        <option value="HLTAID009 Provide cardiopulmonary resuscitation">HLTAID009 Provide cardiopulmonary resuscitation</option>
+                                        <option value="HLTAID010 Provide basic emergency life support">HLTAID010 Provide basic emergency life support</option>
+                                        <option value="HLTAID011 Provide First Aid">HLTAID011 Provide First Aid</option>
+                                        <option value="HLTAID012 Provide First Aid in an education and care setting">HLTAID012 Provide First Aid in an education and care setting</option>
+                                        <option value="CPC40110 Certificate lV in Building and Construction">CPC40110 Certificate lV in Building and Construction (Building)</option>
+                                        <option value="CPC50210 Diploma of Building and Construction">CPC50210 Diploma of Building and Construction (Building)</option>
+                                        <option value="CPCCWHS1001 Prepare to work safely in the Construction Industry">CPCCWHS1001 Prepare to work safely in the Construction Industry</option>
+                                        <option value="CHC40213 Certificate IV in Education Support">CHC40213 Certificate IV in Education Support</option>
+                                        <option value="CHC43015 Certificate IV in Ageing Support">CHC43015 Certificate IV in Ageing Support</option>
+                                        <option value="CHC43115 Certificate IV in Disability">CHC43115 Certificate IV in Disability</option>
+                                    </select>
+                                    <div id="courseerror" style="margin-left: 20px;"></div>
+                                </div>
+                            </div>
+                                <div class="form-group col-md-12">
+                                    <select class="browser-default custom-select form-select" id="govsubornot" >
+                                        <option value="funding" selected>Funding Type</option>
+                                        <option value="1">Government Funded</option>
+                                        <option value="0">Fee for Service</option>
+                                    </select>
+                                    <div id="fundingerror" style="margin-left: 20px;"></div>
                                 </div>
 
+                            </div>
                                 <div class="form-footer">
                                     <button type="submit" name="submitBtnLogin" id="submitBtnLogin" class="btn btn-primary w-100">Update User</button>
 
@@ -322,21 +377,12 @@ if (isset($_POST['userid'])) {
 
 
                             </div>
-                            <div id="messageblock" style="padding-top:10px; display: none; ">
-                                <div class="card mb-4 py-3 border-left-success" style="padding-top:0px !important;padding-bottom:0px !important; ">
-                                    <div class="card-body" style="color:#1cc88a" id="msg">
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="errorblock" style="padding-top:10px; display: none; ">
-                                <div class="card mb-4 py-3 border-left-danger" style="padding-top:0px !important;padding-bottom:0px !important; ">
-                                    <div class="card-body" style="color:red" id="errormsg">
-                                    </div>
-                                </div>
-                            </div>
+
                         </form>
 
                     </div>
+
+
                 </div>
             </div>
 
@@ -348,4 +394,4 @@ if (isset($_POST['userid'])) {
 
     <?php
 }
-    ?>
+?>

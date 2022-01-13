@@ -81,6 +81,7 @@ try {
         $phone = $_POST['Phone'];
         $Password = $_POST['Password'];
         $role = $_POST['Role'];
+        $govsubornot=$_POST['govsubornot'];
         if ($role == 3) {
             $source = $_POST['source'];
             $courseDraft = $_POST['course'];
@@ -88,20 +89,12 @@ try {
             if ($courseDraft == "keepthesamecourses") {
                 $course =NULL;
             } else if ($courseDraft != "keepthesamecourses") {
-                foreach ($courseDraft as $value) {
-                    if ($i == 0) {
-                        $course = $value;
-                        $i++;
-                    } else {
-                        $course = $course . ',' . $value;
-                    }
-                }
+                $course =$courseDraft ;
             }
         }
 
         if($Password!="keepthesame"){
             $Password=md5($Password);
-
             if($role==3 && $course!=NULL){
                 $data = [
                     'firstname'=>$FirstName,
@@ -117,7 +110,28 @@ try {
                 $query  = "UPDATE user SET  `first name`= :firstname, `last name`= :lastname, `email`= :email, `password`= :password,`phone`=:phone,`courses`=:courses,`source`=:sources, `role`= :role Where id=:id ";
                 $stmt = $pdo->prepare($query);
                 $stmt->execute($data);
+
+                //get course id from enrolment
+                $query23 = "select enrolmentId from `user` where id=:id";
+                $stmt23 = $pdo->prepare($query23);
+                $stmt23->bindValue('id', $id, PDO::PARAM_STR);
+                $stmt23->execute();
+                $enrolmentId   = $stmt23->fetch();
+
+
+                //get course id
+                $query234 = "select courseid  FROM `of_enrolment` where id=:id";
+                $stmt234 = $pdo->prepare($query234);
+                $stmt234->bindValue('id',$enrolmentId[0], PDO::PARAM_STR);
+                $stmt234->execute();
+                $courseId   = $stmt234->fetch();
+
+                //update courses table as well
+                $sql = "UPDATE `courses` SET `fundingType`=? WHERE id=? ";
+                $stmt= $pdo->prepare($sql);
+                $stmt->execute([$govsubornot,$courseId[0]]);
                 echo 'Updated Successfully';
+
             }
             elseif ($role==3 && $course==NULL){
                 $data = [
@@ -147,6 +161,25 @@ try {
                 $query  = "UPDATE user SET  `firstname`= :firstname, `lastname`= :lastname, `email`= :email, `password`= :password,`phone`=:phone, `role`= :role Where id=:id ";
                 $stmt = $pdo->prepare($query);
                 $stmt->execute($data);
+                //get course id from enrolment
+                $query23 = "select enrolmentId from `user` where id=:id";
+                $stmt23 = $pdo->prepare($query23);
+                $stmt23->bindValue('id', $id, PDO::PARAM_STR);
+                $stmt23->execute();
+                $enrolmentId   = $stmt23->fetch();
+
+
+                //get course id
+                $query234 = "select courseid  FROM `of_enrolment` where id=:id";
+                $stmt234 = $pdo->prepare($query234);
+                $stmt234->bindValue('id',$enrolmentId[0], PDO::PARAM_STR);
+                $stmt234->execute();
+                $courseId   = $stmt234->fetch();
+
+                //update courses table as well
+                $sql = "UPDATE `courses` SET `fundingType`=? WHERE id=? ";
+                $stmt= $pdo->prepare($sql);
+                $stmt->execute([$govsubornot,$courseId[0]]);
                 echo 'Updated Successfully';
             }
         }else{
@@ -180,10 +213,31 @@ try {
                 $stmt234->execute();
                 $courseId   = $stmt234->fetch();
                 //update courses table as well
-                $sql = "UPDATE `courses` SET `course`=? WHERE id=? ";
+                $sql = "UPDATE `courses` SET `course`=?,`fundingType`=? WHERE id=? ";
                 $stmt= $pdo->prepare($sql);
-                $stmt->execute([$course,$courseId[0]]);
                 echo 'Updated Successfully';
+
+                ////get enrolment id from user table
+                //$query = "select enrolmentId from `user` where `id`=:userid";
+                //$stmt = $pdo->prepare($query);
+                //$stmt->bindParam(':userid', $id, PDO::PARAM_STR);
+                //$stmt->execute();
+                //$enrolmentid   = $stmt->fetch(PDO::FETCH_ASSOC);
+                //
+                ////get courseid from enrolment
+                //$querynew1 = "SELECT `courseid` FROM `of_enrolment` where `id`=:enrolmentid";
+                //$stmtnew1 = $pdo->prepare($querynew1);
+                //$stmtnew1->bindParam('enrolmentid', $enrolmentid, PDO::PARAM_STR);
+                //$stmtnew1->execute();
+                //$rownew1   = $stmtnew1->fetch();
+                //$courseId=$rownew1["id"];
+                //
+                ////update funding in course table
+                //$query  = "UPDATE courses SET  `fundingType`= :funding Where id=:id ";
+                //$stmt = $pdo->prepare($query);
+                //$stmt->bindParam('funding', $_POST["govsubornot"], PDO::PARAM_STR);
+                //$stmt->bindParam('id', $courseId, PDO::PARAM_STR);
+                //$stmt->execute();
 
             }elseif ($role==3 && $course==NULL){
                 $data = [
@@ -195,9 +249,28 @@ try {
                     'role'=>$role,
                     'id'=>$id
                 ];
-                $query  = "UPDATE user SET  `first name`= :firstname, `last name`= :lastname, `email`= :email, `phone`=:phone,`source`=:sources, `role`= :role Where id=:id ";
+                $query  = "UPDATE user SET  `firstname`= :firstname, `lastname`= :lastname, `email`= :email, `phone`=:phone,`source`=:sources, `role`= :role Where id=:id ";
                 $stmt = $pdo->prepare($query);
                 $stmt->execute($data);
+                //get course id from enrolment
+                $query23 = "select enrolmentId from `user` where id=:id";
+                $stmt23 = $pdo->prepare($query23);
+                $stmt23->bindValue('id', $id, PDO::PARAM_STR);
+                $stmt23->execute();
+                $enrolmentId   = $stmt23->fetch();
+
+
+                //get course id
+                $query234 = "select courseid  FROM `of_enrolment` where id=:id";
+                $stmt234 = $pdo->prepare($query234);
+                $stmt234->bindValue('id',$enrolmentId[0], PDO::PARAM_STR);
+                $stmt234->execute();
+                $courseId   = $stmt234->fetch();
+
+                //update courses table as well
+                $sql = "UPDATE `courses` SET `fundingType`=? WHERE id=? ";
+                $stmt= $pdo->prepare($sql);
+                $stmt->execute([$govsubornot,$courseId[0]]);
                 echo 'Updated Successfully';
             }else{
                 $data = [
@@ -211,13 +284,35 @@ try {
                 $query  = "UPDATE user SET  `first name`= :firstname, `last name`= :lastname, `email`= :email,`phone`=:phone, `role`= :role Where id=:id ";
                 $stmt = $pdo->prepare($query);
                 $stmt->execute($data);
+                //get course id from enrolment
+                $query23 = "select enrolmentId from `user` where id=:id";
+                $stmt23 = $pdo->prepare($query23);
+                $stmt23->bindValue('id', $id, PDO::PARAM_STR);
+                $stmt23->execute();
+                $enrolmentId   = $stmt23->fetch();
+
+
+                //get course id
+                $query234 = "select courseid  FROM `of_enrolment` where id=:id";
+                $stmt234 = $pdo->prepare($query234);
+                $stmt234->bindValue('id',$enrolmentId[0], PDO::PARAM_STR);
+                $stmt234->execute();
+                $courseId   = $stmt234->fetch();
+
+                //update courses table as well
+                $sql = "UPDATE `courses` SET `fundingType`=? WHERE id=? ";
+                $stmt= $pdo->prepare($sql);
+                $stmt->execute([$govsubornot,$courseId[0]]);
                 echo 'Updated Successfully';
             }
         }
 
+
+
     }
+
 }catch (Exception $e) {
-    echo 'Caught exception: ',  $e->getMessage(), "\n";
+    echo 'Caught exception: ',  $e->getMessage();
 }
 
 ?>

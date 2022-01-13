@@ -1667,15 +1667,16 @@ class users{
                     </div>
                     <div class="row" style="padding: 10px;">
                         <div class="form-group col-md-6">
-                        <select class="browser-default custom-select form-select" id="govsubornot" >
-                            <option value="funding" selected>Funding Type</option>
-                            <option value="1">Government Funded</option>
-                            <option value="0">Fee for Service</option>
-                        </select>
-                        <div id="fundingerror" style="margin-left: 20px;"></div>
-                    </div>
-                    </div>
+                            <select class="browser-default custom-select form-select" id="govsubornot" >
+                                <option value="funding" selected>Funding Type</option>
+                                <option value="1">Government Funded</option>
+                                <option value="0">Fee for Service</option>
+                            </select>
+                            <div id="fundingerror" style="margin-left: 20px;"></div>
+                        </div>
+                   </div>
                     
+
                     <button type="submit" class="btn btn-primary startanewcourse" style="padding: 20px;font-size: 16px;">Submit</button>
                     
         </form>
