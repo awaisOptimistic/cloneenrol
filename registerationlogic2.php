@@ -166,19 +166,14 @@ if (isset($_POST['sentOTP'])){
             $stmt44->bindParam('courseid', $courseId, PDO::PARAM_STR);
             $stmt44->execute();
 
-            //$query55  = "INSERT INTO `of_enrolment`(`usrid`, `std_id`)VALUES ((SELECT id FROM user WHERE uqid = '$uqid'),'$uqid' )";
-            //$stmt55 = $pdo->prepare($query55);
-            //$stmt55->bindParam('uqid', $uqid, PDO::PARAM_STR);
-            //$stmt55->execute();
+
 
             /***********
              *
              * Code changes start
              *
              */
-            //$updateUserForCourseInEnrolment = "UPDATE `of_enrolment` SET courseid=? WHERE usrid=?";
-            //$updateUserForCourse= $pdo->prepare($updateUserForCourseInEnrolment);
-            //$result = $updateUserForCourse->execute([$courseId,$userId]);
+
 
             //Get Latest enrolment id and insert into the user
             /*** Add record in of_enrolment database ***/
@@ -192,6 +187,19 @@ if (isset($_POST['sentOTP'])){
             $q1 = "UPDATE `user` SET `enrolmentId`=?,`courseid`=? WHERE id=?";
             $s1e= $pdo->prepare($q1);
             $result = $s1e->execute([$enrolId,$courseId,$userId]);
+
+            //////////////////////////////////////////////////////////////////////////
+            /// /////////////////////////////////////////////////////////////////////
+            /// /////////UPDATEEEEEEEEEEEE  NORMALIZED TABLE ///////////////////////
+            /// ///////////////////////////////////////////////////////////////////////
+            /// ////////////////////////////////////////////////////////////////////
+            /// //////
+            $query444  = "INSERT INTO `norm_users_enrol_courses`( `userid`, `enrolid`, `courseid`) VALUES (:userid,:enrolid,:courseid)";
+            $stmt444 = $pdo->prepare($query444);
+            $stmt444->bindParam('userid', $datanew['id'], PDO::PARAM_STR);
+            $stmt444->bindParam('enrolid', $enrolId, PDO::PARAM_STR);
+            $stmt444->bindParam('courseid', $courseId, PDO::PARAM_STR);
+            $stmt444->execute();
 
             /**********
              *
