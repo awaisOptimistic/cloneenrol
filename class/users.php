@@ -483,12 +483,18 @@ class users{
             include "config.php";
 
 
-            $query2 = "SELECT * FROM `of_enrolment` JOIN `user` JOIN `courses` ON of_enrolment.usrid= user.id AND of_enrolment.courseid=courses.id ORDER BY of_enrolment.id DESC";
+           /* $query2 = "SELECT * FROM `of_enrolment` JOIN `user` JOIN `courses` ON of_enrolment.usrid= user.id AND of_enrolment.courseid=courses.id ORDER BY of_enrolment.id DESC";
             $stmt2 = $pdo->prepare($query2);
             //$stmt2->bindParam('userId', $userId, PDO::PARAM_STR);
             $stmt2->execute();
-            $row2   = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+            $row2   = $stmt2->fetchAll(PDO::FETCH_ASSOC);*/
 
+            //get everything from normalised table.
+            $query2 = "SELECT * FROM `norm_users_enrol_courses`";
+            $stmt2 = $pdo->prepare($query2);
+            $stmt2->execute();
+            $row2   = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+            ///var_dump($row2);
 
             $i= 1;
 
@@ -533,6 +539,20 @@ class users{
 
             foreach ($row2 as $data){
 
+                $query12 = "SELECT * FROM `courses`  WHERE `id`=:id";
+                $stmt22 = $pdo->prepare($query12);
+                $stmt22->bindParam('id', $data['courseid'], PDO::PARAM_STR);
+                $stmt22->execute();
+                $newresult2 = $stmt22->fetch();
+
+                //SELECT * FROM `of_enrolment` join user where `of_enrolment`.`id`=41 and user.id=208
+                $query2 = "SELECT * FROM `of_enrolment` join user where `of_enrolment`.`id`=:enrolId and user.id=:userid ";
+                $stmt2 = $pdo->prepare($query2);
+                $stmt2->bindParam('enrolId', $data["enrolid"], PDO::PARAM_STR);
+                $stmt2->bindParam('userid', $data["userid"], PDO::PARAM_STR);
+                $stmt2->execute();
+                $data   = $stmt2->fetch();
+
                 $course=getStudentCourse($data["course"]);
                 $check=checkForhunderdPercent($data,$course);
                 if($check==1){
@@ -575,7 +595,7 @@ class users{
 
                     //  echo $submission;
                     /*    if (get_enrolmentStatus($data["uqid"]) != 1){*/
-                    echo '<td><a href="index.php?page=20&$courseId='.$data['id'].'" target="_blank"></ahref><i class="fa fa-link" style="color:blue;"></i></a>';
+                    echo '<td><a href="index.php?page=20&enrolmentId='.$data[0].'" target="_blank"></ahref><i class="fa fa-link" style="color:blue;"></i></a>';
                     echo '<a href="index.php?page=14&submission='.$submission.'" class="btn btn-warning" onclick="showHide2();">Sync</a></td>
                     ';
                     //wisenet
@@ -754,14 +774,22 @@ class users{
             </div>';
 
             include "config.php";
-
-
-            $query2 = "SELECT * FROM `of_enrolment` JOIN `user` JOIN `courses` ON of_enrolment.usrid= user.id AND of_enrolment.courseid=courses.id ORDER BY of_enrolment.id DESC";
+            //get everything from normalised table.
+            $query2 = "SELECT * FROM `norm_users_enrol_courses`";
             $stmt2 = $pdo->prepare($query2);
-            //$stmt2->bindParam('userId', $userId, PDO::PARAM_STR);
             $stmt2->execute();
             $row2   = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+            ///var_dump($row2);
 
+
+            //for each record do something
+
+            //$query2 = "SELECT * FROM `of_enrolment` JOIN `user` JOIN `courses` ON of_enrolment.usrid= user.id AND of_enrolment.courseid=courses.id ORDER BY of_enrolment.id DESC";
+            //$stmt2 = $pdo->prepare($query2);
+            ////$stmt2->bindParam('userId', $userId, PDO::PARAM_STR);
+            //$stmt2->execute();
+            //$row2   = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+            //var_dump($row2);
             $i= 1;
 
             print_table_header();
@@ -802,6 +830,52 @@ class users{
                <tbody>';
 //var_dump($row2);
             foreach ($row2 as $data) {
+                //get all user data
+                //$query = "select * from user where `id`=:userId AND role=3";
+                //$stmt = $pdo->prepare($query);
+                //$stmt->bindParam('userId', $data["userid"], PDO::PARAM_STR);
+                //$stmt->execute();
+                //$AllData  = $stmt->fetch(PDO::FETCH_ASSOC);
+                ////get all enrolment data
+                //echo "<pre>";
+                //echo "<b>USER</b>";
+                //print_r($AllData);
+                //echo "</pre>";
+
+                //$query2 = "SELECT * FROM `of_enrolment` where `id`=:enrolId ";
+                //$stmt2 = $pdo->prepare($query2);
+                //$stmt2->bindParam('enrolId', $data["enrolid"], PDO::PARAM_STR);
+                //$stmt2->execute();
+                //$AllData2   = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+                //echo "<pre>";
+                //echo "<b>Enrol</b>";
+                //print_r($AllData2);
+                //echo "</pre>";
+
+                $query12 = "SELECT * FROM `courses`  WHERE `id`=:id";
+                $stmt22 = $pdo->prepare($query12);
+                $stmt22->bindParam('id', $data['courseid'], PDO::PARAM_STR);
+                $stmt22->execute();
+                $newresult2 = $stmt22->fetch();
+
+                //SELECT * FROM `of_enrolment` join user where `of_enrolment`.`id`=41 and user.id=208
+                $query2 = "SELECT * FROM `of_enrolment` join user where `of_enrolment`.`id`=:enrolId and user.id=:userid ";
+                $stmt2 = $pdo->prepare($query2);
+                $stmt2->bindParam('enrolId', $data["enrolid"], PDO::PARAM_STR);
+                $stmt2->bindParam('userid', $data["userid"], PDO::PARAM_STR);
+                $stmt2->execute();
+                $data   = $stmt2->fetch();
+
+
+
+                //var_dump($newresult2);
+                //echo "<pre>";
+                //echo "HERE is it:"+$data[0]+"<br>";
+                //print_r($data);
+                //echo "</pre>";
+
+
+
                 //echo $data["course"];
                 $course = getStudentCourse($data["course"]);
                 $check = checkForhunderdPercent($data,$course);
@@ -811,7 +885,7 @@ class users{
                     echo '<td >' . $data["uqid"] . '</td>';
                     echo '<td>' . $data["firstname"] . ' ' . $data["lastname"] . '</td>';
                     echo '<td> +61' . $data["phone"] . '</td>';
-                    echo '<td>' . $data["course"] . '</td>';
+                    echo '<td>' . $newresult2["course"] . '</td>';
                     echo '<td>' . $data["campus"] . '</td>';
 
 
@@ -968,12 +1042,13 @@ class users{
         global $url,$pdo, $enrolmentForm, $usiForm, $skillForm, $documentForm, $usitransForm,$seclln ;
         $role =  $_SESSION['role'];
         get_breadcrumbs($page);
-        $courseId= $_GET['$courseId'];
+        //$courseId= $_GET['$courseId'];
         $api=get_setting_api();
 
-        $query2 = "SELECT * FROM `of_enrolment` JOIN `user` ON of_enrolment.usrid= user.id AND of_enrolment.courseid=:courseId";
+
+        $query2 = "SELECT * FROM `of_enrolment` JOIN `user` ON of_enrolment.usrid= user.id where `of_enrolment`.id=:id";
         $stmt2 = $pdo->prepare($query2);
-        $stmt2->bindParam('courseId', $courseId, PDO::PARAM_STR);
+        $stmt2->bindParam('id', $_GET["enrolmentId"], PDO::PARAM_STR);
         $stmt2->execute();
         $row2   = $stmt2->fetchAll(PDO::FETCH_ASSOC);
         $std_id = $row2[0]['uqid'];
