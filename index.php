@@ -271,6 +271,9 @@ global  $url, $enrolmentForm, $usiForm, $skillForm, $documentForm, $usitransForm
             }else{
                 echo '<script type="text/javascript">window.location.href = "'.$url.'"</script>';
             }
+        }else if($page==100){
+            $setting = new setting();
+            $setting->makedbcompaitable($page);
         }else{
             $forms = new forms();
             $forms->student_form($role);

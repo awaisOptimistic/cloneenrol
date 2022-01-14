@@ -1,5 +1,7 @@
 <?php
-
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
 
 class setting
 { public $baseURL = 'https://api.jotform.com';
@@ -15,7 +17,90 @@ class setting
     public function definition() {
         return false;
     }
+    public function makedbcompaitable($page){
+        global $pdo;
+        //Revision jan 2022 queries.
+        #1   Create a new courses table
+        #1    #make new table name"`norm_users_enrol_courses`"
+        #create FK in course table.
+        # To create FK in user and enrolment will require enteries in  norm_users_enrol_courses table
+        #To achieve that follow the following:
+        #1 Join User and enrolment on basis of id
+        $query2 = "SELECT of_enrolment.usrid,of_enrolment.id,user.courses FROM `of_enrolment` JOIN `user` WHERE of_enrolment.usrid= user.id";
+        $stmt2 = $pdo->prepare($query2);
+        $stmt2->bindParam('courseId', $courseId, PDO::PARAM_STR);
+        $stmt2->execute();
+        $row2   = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+        //echo '<pre>';
+        //print_r($row2);
+        //echo '</pre>';
 
+        #2 Add them into course table
+        foreach ($row2 as $value) {
+            if (strpos($value['courses'], 'CPCCWHS1001') !== false || strpos($value['courses'], 'HLTAID0') !== false ||strpos($value['courses'], 'Building and Construction') !== false){
+                $funding=0;
+            }else{
+                $funding=1;
+            }
+            //add in course table
+            $queryCourse  = "INSERT INTO `courses`(  `userid`, `course`, `fundingType`) VALUES (:userid,:course,:funding)";
+            $stmtCourse = $pdo->prepare($queryCourse);
+            $stmtCourse->bindParam('userid', $value['usrid'], PDO::PARAM_STR);
+            $stmtCourse->bindParam('course', $value['courses'], PDO::PARAM_STR);
+            $stmtCourse->bindParam('funding', $funding, PDO::PARAM_STR);
+            $stmtCourse->execute();
+
+            #3 get id from course
+            $query1 = "SELECT id FROM `courses`  WHERE `userid`=:userid";
+            $stmt2 = $pdo->prepare($query1);
+            $stmt2->bindParam('userid', $value['usrid'], PDO::PARAM_STR);
+            $stmt2->execute();
+            $results  = $stmt2->fetch();
+            //echo $results["id"];
+
+            #4 insert all of them in normalise table
+            $queryCourse  = "INSERT INTO `norm_users_enrol_courses`( `userid`, `enrolid`, `courseid`) VALUES (:userid,:enrolid,:courseid)";
+            $stmtCourse = $pdo->prepare($queryCourse);
+            $stmtCourse->bindParam('userid', $value['usrid'], PDO::PARAM_STR);
+            $stmtCourse->bindParam('enrolid', $value['id'], PDO::PARAM_STR);
+            $stmtCourse->bindParam('courseid', $results["id"], PDO::PARAM_STR);
+            $stmtCourse->execute();
+        }
+
+        $query2 = "SELECT `id`, `userid`, `enrolid`, `courseid` FROM `norm_users_enrol_courses`";
+        $stmt2 = $pdo->prepare($query2);
+        $stmt2->execute();
+        $row2   = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+        //echo '<pre>';
+        //print_r($row2);
+        //echo '</pre>';
+        foreach ($row2 as $value) {
+            $sql = "UPDATE user SET normid=? WHERE id=?";
+            $stmt= $pdo->prepare($sql);
+            $stmt->execute([$value["id"],$value["userid"]]);
+
+            $sql = "UPDATE  `of_enrolment` SET normid=? WHERE id=?";
+            $stmt= $pdo->prepare($sql);
+            $stmt->execute([$value["id"],$value["enrolid"]]);
+
+            $sql = "UPDATE  `courses` SET normid=? WHERE id=?";
+            $stmt= $pdo->prepare($sql);
+            $stmt->execute([$value["id"],$value["courseid"]]);
+
+        }
+
+        #delete all student accounts with no enrolment
+        echo 'yes';
+
+
+        # make sure to create all of the foreign keys
+
+        /*
+         * Create table""
+             *Add column name NORMID to the table.
+             *
+            * */
+    }
     /**
      * Function to get API
      * @print [get API from the database]
@@ -557,5 +642,6 @@ class setting
 
         </script>
         <?php
+
     }
 }
