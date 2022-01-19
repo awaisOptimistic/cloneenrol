@@ -132,16 +132,6 @@ if (isset($_POST['sentOTP'])){
             $stmt3->bindParam('id', $userId, PDO::PARAM_STR);
             $stmt3->execute();
             $datanew=$stmt3->fetch();
-            /*$courseid=2;
-            $courserole=5;
-            $FirstName=$datanew['first name'];
-            $LastName=$datanew['lastname'];
-            $Email=$datanew['email'];
-            $Password=$datanew['password'];
-            $uqid=$datanew['uqid'];
-            $acceptiondate=date("Y-m-d");*/
-
-
 
             $query4  = "INSERT INTO `llnusers`( `firstname`, `lastname`, `email`, `password`, `uqid`)VALUES (:firstname, :lastname, :email, :password, :uqid)";
             $stmt4 = $pdo->prepare($query4);
@@ -157,16 +147,13 @@ if (isset($_POST['sentOTP'])){
 
             /*** Add record in of_enrolment database ***/
             //$courseId $datanew['id'] $datanew['uqid']
-            echo $courseId.' '.$datanew['id'].' '. $datanew['uqid'];
+            //echo $courseId.' '.$datanew['id'].' '. $datanew['uqid'];
 
-            $query44  = "INSERT INTO `of_enrolment`( `usrid`, `std_id`,`courseid`)VALUES (:userid,:stdid,:courseid)";
-            $stmt44 = $pdo->prepare($query44);
-            $stmt44->bindParam('userid', $datanew['id'], PDO::PARAM_STR);
-            $stmt44->bindParam('stdid', $datanew['uqid'], PDO::PARAM_STR);
-            $stmt44->bindParam('courseid', $courseId, PDO::PARAM_STR);
-            $stmt44->execute();
-
-
+            $query = "INSERT INTO `of_enrolment`( `usrid`, `std_id`, `enrolForm`, `skillForm`, `usiForm`, `documentForm`, `ptrForm`, `llnForm`) VALUES (:userid,:stdid, NULL,NULL,NULL,NULL,NULL,NULL)";
+            $stmt = $pdo->prepare($query);
+            $stmt->bindParam('userid', $userId, PDO::PARAM_STR);
+            $stmt->bindParam('stdid', $datanew['uqid'], PDO::PARAM_STR);
+            $stmt->execute();
 
             /***********
              *
@@ -184,10 +171,6 @@ if (isset($_POST['sentOTP'])){
             $result2 = $stmt6->fetch();
             $enrolId = $result2['id'];
 
-            $q1 = "UPDATE `user` SET `enrolmentId`=?,`courseid`=? WHERE id=?";
-            $s1e= $pdo->prepare($q1);
-            $result = $s1e->execute([$enrolId,$courseId,$userId]);
-
             //////////////////////////////////////////////////////////////////////////
             /// /////////////////////////////////////////////////////////////////////
             /// /////////UPDATEEEEEEEEEEEE  NORMALIZED TABLE ///////////////////////
@@ -196,10 +179,32 @@ if (isset($_POST['sentOTP'])){
             /// //////
             $query444  = "INSERT INTO `norm_users_enrol_courses`( `userid`, `enrolid`, `courseid`) VALUES (:userid,:enrolid,:courseid)";
             $stmt444 = $pdo->prepare($query444);
-            $stmt444->bindParam('userid', $datanew['id'], PDO::PARAM_STR);
+            $stmt444->bindParam('userid', $userId, PDO::PARAM_STR);
             $stmt444->bindParam('enrolid', $enrolId, PDO::PARAM_STR);
             $stmt444->bindParam('courseid', $courseId, PDO::PARAM_STR);
             $stmt444->execute();
+
+            #3 get enrol id and coourse id
+            $querynew = "SELECT * FROM `norm_users_enrol_courses` where userid=:userid AND enrolid=:enrolid AND courseid=:courseid";
+            $stmtnew = $pdo->prepare($querynew);
+            $stmtnew->bindParam('userid', $userId, PDO::PARAM_STR);
+            $stmtnew->bindParam('enrolid', $enrolId, PDO::PARAM_STR);
+            $stmtnew->bindParam('courseid', $courseId, PDO::PARAM_STR);
+            $stmtnew->execute();
+            $rownew   = $stmtnew->fetch(PDO::FETCH_ASSOC);
+
+            $sql = "UPDATE user SET normid=? WHERE id=?";
+            $stmt= $pdo->prepare($sql);
+            $stmt->execute([$rownew["id"],$userId]);
+
+            $sql = "UPDATE  `of_enrolment` SET normid=? WHERE id=?";
+            $stmt= $pdo->prepare($sql);
+            $stmt->execute([$rownew["id"],$enrolId]);
+
+            $sql = "UPDATE  `courses` SET normid=? WHERE id=?";
+            $stmt= $pdo->prepare($sql);
+            $stmt->execute([$rownew["id"],$courseId]);
+
 
             /**********
              *
@@ -217,7 +222,7 @@ if (isset($_POST['sentOTP'])){
             $_SESSION['uqid']=$datanew["uqid"];
             $msg = "Log in Success!";
             session_write_close();
-            send_sms_to_coordinator($name,$uqid, $Email,$course);
+            //send_sms_to_coordinator($name,$uqid, $Email,$course);
             echo 'Success';
         }else{
             /***Insert Query***/
