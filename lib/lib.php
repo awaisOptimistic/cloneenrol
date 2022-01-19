@@ -2464,13 +2464,13 @@ function get_completedEnrolmentData(){
 }
 
 
-function  userDetails($userId){
+function  userDetails($enrolId){
     try {
         global $pdo;
 
-        $query2 = "SELECT * FROM `of_enrolment`  JOIN user ON of_enrolment.usrid= user.id AND of_enrolment.usrid=:userId ORDER BY of_enrolment.id DESC LIMIT 1";
+        $query2 = "SELECT * FROM `of_enrolment`  JOIN user ON of_enrolment.usrid= user.id AND of_enrolment.id=:id";
         $stmt2 = $pdo->prepare($query2);
-        $stmt2->bindParam('userId', $userId, PDO::PARAM_STR);
+        $stmt2->bindParam('id', $enrolId, PDO::PARAM_STR);
         $stmt2->execute();
         $row2   = $stmt2->fetch(PDO::FETCH_ASSOC);
         return $row2;
@@ -2906,15 +2906,20 @@ function AdminDasboard(){
 }
 
 
-function StudentDashboard($row2, $security, $found,$different,$userId){
+function StudentDashboard($row2, $security, $firstaidorwhitecard,$different,$userId,$normid){
     global $pdo,$url,  $enrolmentForm, $usiForm, $skillForm, $documentForm, $usitransForm ,$seclln;
 
+
     //check if course is funded or not
-    $query1 = "SELECT * FROM `courses`  WHERE `id`=:courseid";
+    $query1 = "SELECT * FROM `courses`  WHERE `normid`=:normid";
     $stmt2 = $pdo->prepare($query1);
-    $stmt2->bindParam('courseid', $row2['courseid'], PDO::PARAM_STR);
+    $stmt2->bindParam('normid', $normid, PDO::PARAM_STR);
     $stmt2->execute();
-    $Govfund  = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+    $result  = $stmt2->fetch(PDO::FETCH_ASSOC);
+    $Govfund=$result["fundingType"];
+    //echo "<pre>";
+    //print_r($row2);
+    //echo "</pre>";
 
     if ($Govfund==1){
         echo 'GOV FUNDED';
@@ -2933,16 +2938,46 @@ function StudentDashboard($row2, $security, $found,$different,$userId){
              * Ajax to delete form
              */
             $(function(){
+                $( "#courseSelect" ).change(function() {
+
+                    var val=$("#courseSelect option:selected").text();
+                    if(val.indexOf('HLTAID') > -1||val.indexOf('CPCCWHS1001') > -1 ||val.indexOf('Building and Construction') > -1 ){
+                        //$('#govsubornot').select;
+                        $('#govsubornot  option:eq(2)').prop('selected', true);
+                        $("#govsubornot").attr("disabled", "disabled");
+                    }else{
+                        $("#govsubornot").removeAttr("disabled");
+                        //alert( val );
+                    }
+
+                });
                 $(document).on('click','.startanewcourse',function(event) {
+                    var errorCount=0;
                          //alert('working');
                         event.preventDefault();
-                        var val = $("#changeOfCourse").find(":selected").text();
-                        if(val!="Open this select menu"){
-                            alert("ok");
+                        var courseselection=$("#courseSelect option:selected").text();
+                        var govsubornot=$("#govsubornot option:selected").val();
+
+                        if (courseselection=="" || courseselection=="Select courses you are interested in"){
+                            $('#courseerror').html('<div class="error" id="" style="padding-top:10px; margin:0px;"><p class="error" style="color:red; font-size:12px;margin:0px;">Please select course/courses</p></div>');
+                            errorCount++;
+                        }else{
+                            $('#courseerror').html('');
+                        }
+
+                        if (govsubornot=="" || govsubornot=="funding"){
+                            $('#fundingerror').html('<div class="error" id="" style="padding-top:10px; margin:0px;"><p class="error" style="color:red; font-size:12px;margin:0px;">Please select funding type</p></div>');
+                            errorCount++;
+                        }else{
+                            $('#fundingerror').html('');
+                        }
+
+                        if(errorCount==0){
+                            //alert("ok");
                             $.ajax({
                                 type: 'POST',
                                 url: 'lib/userlib.php',
-                                data: {'newcourse': val},
+                                data: {'newcourse': courseselection,'govsubornot':govsubornot},
                                 success: function (data) {
                                     alert(data);
                                     if (data == "YES") {
@@ -2973,21 +3008,38 @@ function StudentDashboard($row2, $security, $found,$different,$userId){
     <div class="modal-content">
       <div class="card-body addANewCourseCard">
             <form id="addANewCourse">
-                <select class="custom-select custom-select-lg mb-3" id="changeOfCourse" style="padding: 20px;font-size: 16px;">
-                        <option selected>Open this select menu</option>
-                        <option value="CHC33015 Certificate III in Individual Support">CHC33015 Certificate III in Individual Support (Aged Care)</option>
-                        <option value="CPP20218 Certificate II in Security Operations">CPP20218 Certificate II in Security Operations</option>
-                        <option value="CHC30113 Certificate III in Early Childhood Education and Care">CHC30113 Certificate III in Early Childhood Education and Care</option>
-                        <option value="CHC50113 Diploma of Early Childhood Education and Care">CHC50113 Diploma of Early Childhood Education and Care</option>
-                        <option value="HLTAID009 Provide cardiopulmonary resuscitation">HLTAID009 Provide cardiopulmonary resuscitation</option>
-                        <option value="HLTAID010 Provide basic emergency life support">HLTAID010 Provide basic emergency life support</option>
-                        <option value="HLTAID011 Provide First Aid">HLTAID011 Provide First Aid</option>
-                        <option value="HLTAID012 Provide First Aid in an education and care setting">HLTAID012 Provide First Aid in an education and care setting</option>
-                        <option value="CPCCWHS1001 Prepare to work safely in the Construction Industry">CPCCWHS1001 Prepare to work safely in the Construction Industry</option>
-                        <option value="CHC40213 Certificate IV in Education Support">CHC40213 Certificate IV in Education Support</option>
-                        <option value="CHC43015 Certificate IV in Ageing Support">CHC43015 Certificate IV in Ageing Support</option>
-                        <option value="CHC43115 Certificate IV in Disability">CHC43115 Certificate IV in Disability</option>
-                    </select>
+                    <div class="row">
+                       <div class="col-md-12" style="margin-bottom: 5px;">
+                          <select id="courseSelect" class="form-select" aria-label="Default select example">
+                             <option selected>Select courses you are interested in</option>
+                             <option value="CHC33015 Certificate III in Individual Support">CHC33015 Certificate III in Individual Support (Aged Care)</option>
+                             <option value="CPP20218 Certificate II in Security Operations">CPP20218 Certificate II in Security Operations</option>
+                             <option value="BH">Baton & Handcuff</option>
+                             <option value="CRO">Control Room Operation</option>
+                             <option value="CHC30113 Certificate III in Early Childhood Education and Care">CHC30113 Certificate III in Early Childhood Education and Care</option>
+                             <option value="CHC50113 Diploma of Early Childhood Education and Care">CHC50113 Diploma of Early Childhood Education and Care</option>
+                             <option value="HLTAID009 Provide cardiopulmonary resuscitation">HLTAID009 Provide cardiopulmonary resuscitation</option>
+                             <option value="HLTAID010 Provide basic emergency life support">HLTAID010 Provide basic emergency life support</option>
+                             <option value="HLTAID011 Provide First Aid">HLTAID011 Provide First Aid</option>
+                             <option value="HLTAID012 Provide First Aid in an education and care setting">HLTAID012 Provide First Aid in an education and care setting</option>
+                             <option value="CPC40110 Certificate lV in Building and Construction">CPC40110 Certificate lV in Building and Construction (Building)</option>
+                             <option value="CPC50210 Diploma of Building and Construction">CPC50210 Diploma of Building and Construction (Building)</option>
+                             <option value="CPCCWHS1001 Prepare to work safely in the Construction Industry">CPCCWHS1001 Prepare to work safely in the Construction Industry</option>
+                             <option value="CHC40213 Certificate IV in Education Support">CHC40213 Certificate IV in Education Support</option>
+                             <option value="CHC43015 Certificate IV in Ageing Support">CHC43015 Certificate IV in Ageing Support</option>
+                             <option value="CHC43115 Certificate IV in Disability">CHC43115 Certificate IV in Disability</option>
+                          </select>
+                          <div id="courseerror" style="margin-left: 20px;"></div>
+                       </div>
+                    </div>
+                    <div class="form-group col-md-12">
+                       <select class="browser-default custom-select form-select" id="govsubornot" >
+                          <option value="funding" selected>Funding Type</option>
+                          <option value="1">Government Funded</option>
+                          <option value="0">Fee for Service</option>
+                       </select>
+                       <div id="fundingerror" style="margin-left: 20px;"></div>
+                    </div>
             <br>
                     <button type="submit" class="btn btn-primary startanewcourse" style="padding: 20px;font-size: 16px;">Submit</button>
         </form>
@@ -2999,7 +3051,7 @@ function StudentDashboard($row2, $security, $found,$different,$userId){
     if($row2['enrolForm']!=NULL && $row2['skillForm']!=NULL && $row2['usiForm']!=NULL && $row2['documentForm']!=NULL && $row2['ptrForm']!=NULL && $row2['llnForm']!=NULL){
         echo '<div style="text-align: center !important;"><img src="img/completed task.png"  style="width: 30%;"> <br><h1> Thank You for completing the enrolment process!</h1><br><p>Do you want to enrol for another course?</p><button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg" style="margin-bottom: 20px;" id="newenrolment">Start a new enrolment</button>
 </div>';
-    }elseif ($row2['enrolForm']!=NULL && $row2['documentForm']!=NULL && $found==1 && $different==0){
+    }elseif ($row2['enrolForm']!=NULL && $row2['documentForm']!=NULL && $firstaidorwhitecard==1 && $different==0){
         echo '<div style="text-align: center !important;"><img src="img/completed task.png"  style="width: 30%;"> <br><h1> Thank You!</h1><br><p>Do you want to enrol for another course?</p><button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg" style="margin-bottom: 20px;" id="newenrolment">Start a new enrolment</button>
 </div>';
     }else{
@@ -3182,7 +3234,7 @@ function StudentDashboard($row2, $security, $found,$different,$userId){
          * If only selected course is first aid or whitecard
          *
          ***/
-        elseif ($found==1 && $different==0 && $security==0){
+        elseif ($firstaidorwhitecard==1 && $different==0 && $security==0){
             echo '<div style="border: 2px red solid; text-align: center;font-size: 24px;">
                 <p><b>Note:</b> 
             For any information or query call 1300 436 487.<br> <a href="'.$url.'/Student Guide - Enrolment Procedure - V.1.4.pdf" target="_blank">Click here</a> for information about how to complete the enrolment process </p>

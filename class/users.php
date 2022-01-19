@@ -83,7 +83,7 @@ class users{
                 echo '<td><a href="#" id="' . $data["id"] . '" data-toggle="modal" data-target="#add_data_Modal2" class="btn btn-primary btn-circle btn-md bringupdateform"  >
                            <i class="fas fa-edit"></i></a>
                            
-                   <a href="#" class="btn btn-danger btn-circle btn-md" id="' . $data["id"] . '"><i class="fas fa-trash"></i></a></td></tr>'  ;
+                   <a href="#" class="btn btn-danger btn-circle btn-md" id="' . $data["id"] . '"><i class="fas fa-trash"></i></a></td></tr>';
             }
             print_table_footer();
         }

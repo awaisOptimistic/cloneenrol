@@ -473,42 +473,46 @@ function filterFunction() {
             global $pdo,$url,  $enrolmentForm, $usiForm, $skillForm, $documentForm, $usitransForm ,$seclln;
             $userId=$_SESSION['userid'];
 
-            /** Edited By Inam 07/12/2021 */
             $query = "select * from user where `id`=:userId";
             $stmt = $pdo->prepare($query);
             $stmt->bindParam('userId', $userId, PDO::PARAM_STR);
             $stmt->execute();
             $row  = $stmt->fetch(PDO::FETCH_ASSOC);
-            // var_dump($row);
-            $courses_ar = explode('a,', $row ["courses"]);
-            //echo '<h1>d</h1>';
-            //var_dump($courses_ar);
-            $different=0;
-            $found=0;
-            //IF FOUND=1 AND DIFFERENT =0 THEN ONLY WHITECARD OR FIRST AID
-            //IF FOUND=1 AND DIFFERENT =1 THEN NOT ONLY WHITECARD OR FIRST AID
-            //IF FOUND=0 AND DIFFERENT =1 THEN NO WHITECARD OR FIRST AID
-            $security=0;
-            foreach ($courses_ar as $value) {
-                if (strpos($value, 'CPP20218') !== false){
-                    $security=1;
-                }
-                if (strpos($value, 'CPCCWHS1001') !== false || strpos($value, 'HLTAID0') !== false){
-                    $found=1;
-                }else{
-                    $different=1;
-                }
-            }
-            $row2= userDetails($userId);
 
+
+            $query2 = "SELECT * FROM `norm_users_enrol_courses` JOIN user ON norm_users_enrol_courses.id=user.normid AND norm_users_enrol_courses.id=:id";
+            $stmt2 = $pdo->prepare($query2);
+            $stmt2->bindParam('id', $row["normid"], PDO::PARAM_STR);
+            $stmt2->execute();
+            $row2   = $stmt2->fetch(PDO::FETCH_ASSOC);
+
+            $normid=$row2["id"];
+            //echo "<pre>";
+            //print_r($row2);
+            //echo "</pre>";
+
+            if (strpos($row2["courses"], 'CPP20218') !== false){
+                $security=1;
+            }
+            if (strpos($row2["courses"], 'CPCCWHS1001') !== false || strpos($row2["courses"], 'HLTAID0') !== false){
+                $firstaidorwhitecard=1;
+            }else{
+                $different=1;
+            }
+
+
+
+            /** Edited By Inam 07/12/2021 */
+            $row2= userDetails($row2["enrolid"]);
+            //echo "<pre>";
+            //print_r($row2);
+            //echo "</pre>";
         /** Edited By Inam 26/10/2021 */
         echo '<div class="container-fluid">';
         echo '<div class="row">';
         if($role==3){
-            /** Edited By Inam 07/12/2021 */
-
             /** Student Dashboard */
-            StudentDashboard($row2, $security, $found,$different,$userId);
+            StudentDashboard($row2, $security, $firstaidorwhitecard,$different,$userId,$normid);
         }else{
 
             /** Edited By Inam 07/12/2021 */
@@ -516,6 +520,7 @@ function filterFunction() {
             /** Admin/Coordinator Dashbaord **/
             AdminDasboard();
         }
+
     }
 
         public function view_course_display($page){
