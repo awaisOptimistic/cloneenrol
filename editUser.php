@@ -186,7 +186,7 @@ if (isset($_POST['userid'])) {
                         type: "POST",
                         data: info,
                         success: function(data){
-                            alert(data);
+                            //alert(data);
                             var a = data.includes("Success");
                             if (a) {
                                 $("#messageblock").css("display","block");

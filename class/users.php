@@ -1527,7 +1527,7 @@ class users{
                         $('#courseerror').html('');
                     }
 
-                    if (govsubornot=="" || govsubornot=="Funding Type"){
+                    if (govsubornot=="" || govsubornot=="funding"){
                         $('#fundingerror').html('<div class="error" id="" style="padding-top:10px; margin:0px;"><p class="error" style="color:red; font-size:12px;margin:0px;">Please select funding type</p></div>');
                         errorCount++;
                     }else{
@@ -1536,13 +1536,15 @@ class users{
                     event.preventDefault();
 
                     if (errorCount==0) {
-                        //alert("ok");
+                        //alert(govsubornot);
                         $.ajax({
                             type: 'POST',
                             url: 'lib/userlib.php',
                             data: {'newcourse': courseselection,'govsubornot':govsubornot},
                             success: function (data) {
                                 //alert(data);
+                                $("#oldCourseSpan").html(courseselection);
+                                $("#addANewCourse").remove();
                             }
                         });
                     }
