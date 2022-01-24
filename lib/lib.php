@@ -1987,8 +1987,6 @@ function manualcomplete($checkedStatus,$data,$form){
     $checkedStatus= $myJSON->userid;
     $time=$myJSON->time;
 
-
-
     if($checkedStatus!=NULL){
         if($form=="enrolForm"){
             $result=printOrangeM($data['enrolForm']).'<br>'.printGreenTick($checkedStatus,$time);
@@ -2019,7 +2017,7 @@ function manualcomplete($checkedStatus,$data,$form){
             $result=printOrangeM($data['ptrForm']);
         }
         //100% checked
-        $result=$result.printChecked($data['id'],$form);
+        $result=$result.printChecked($data['newid'],$form);
     }
     return $result;
 }
@@ -2067,7 +2065,7 @@ function autoComplete($checkedStatus,$data,$form){
 
 function markManualComplete($data,$form){
     //square button
-    $result = printManualTick($data['id'],$form);
+    $result = printManualTick($data['newid'],$form);
     return $result;
 }
 
@@ -2084,7 +2082,6 @@ function currentEnrolmentStatus($data){
         //it's array means done online
         $result= autoComplete($checkedStatus,$data,$form);
     }else{
-/** @var ** $result */
         $result= markManualComplete($data,$form);
     }
     return $result;

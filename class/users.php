@@ -490,11 +490,13 @@ class users{
             $row2   = $stmt2->fetchAll(PDO::FETCH_ASSOC);*/
 
             //get everything from normalised table.
-            $query2 = "SELECT * FROM `norm_users_enrol_courses`";
+            $query2 = "SELECT * FROM `norm_users_enrol_courses` ORDER BY norm_users_enrol_courses.id DESC";
             $stmt2 = $pdo->prepare($query2);
             $stmt2->execute();
             $row2   = $stmt2->fetchAll(PDO::FETCH_ASSOC);
-            ///var_dump($row2);
+            //echo
+
+
 
             $i= 1;
 
@@ -545,23 +547,26 @@ class users{
                 $stmt22->execute();
                 $newresult2 = $stmt22->fetch();
 
+
                 //SELECT * FROM `of_enrolment` join user where `of_enrolment`.`id`=41 and user.id=208
-                $query2 = "SELECT * FROM `of_enrolment` join user where `of_enrolment`.`id`=:enrolId and user.id=:userid ";
+                //SELECT * FROM `of_enrolment` join user where `of_enrolment`.`id`=41 and user.id=208
+                $query2 = "SELECT *, `of_enrolment`.`id` as newid FROM `of_enrolment` join user where `of_enrolment`.`id`=:enrolId and user.id=:userid and user.role=3";
                 $stmt2 = $pdo->prepare($query2);
                 $stmt2->bindParam('enrolId', $data["enrolid"], PDO::PARAM_STR);
                 $stmt2->bindParam('userid', $data["userid"], PDO::PARAM_STR);
                 $stmt2->execute();
-                $data   = $stmt2->fetch();
+                $data   = $stmt2->fetch(PDO::FETCH_ASSOC);
+
 
                 $course=getStudentCourse($data["course"]);
                 $check=checkForhunderdPercent($data,$course);
                 if($check==1){
                     echo '<tr>';
                     echo '<td ">'.$i.'</td>';
-                    echo '<td >' . $data["uqid"] . '</td>';
+                    echo '<td >'. $data["uqid"] . '</td>';
                     echo '<td>' . $data["firstname"] .' ' .$data["lastname"] . '</td>';
                     echo '<td> +61'.$data["phone"].'</td>';
-                    echo '<td>'.$data["course"].'</td>';
+                    echo '<td>'.$newresult2["course"].'</td>';
                     echo '<td>'.$data["campus"].'</td>';
                     if($course==2){
                         echo '<td>'.currentEnrolmentStatus($data).'</td>';
@@ -595,10 +600,11 @@ class users{
 
                     //  echo $submission;
                     /*    if (get_enrolmentStatus($data["uqid"]) != 1){*/
-                    echo '<td><a href="index.php?page=20&enrolmentId='.$data[0].'" target="_blank"></ahref><i class="fa fa-link" style="color:blue;"></i></a>';
+                    echo '<td>'.$row2["courseid"].'<a href="index.php?page=20&enrolmentId='.$data["newid"].'&courseid='.$newresult2["id"].'" target="_blank"></ahref><i class="fa fa-link" style="color:blue;"></i></a>';
                     echo '<a href="index.php?page=14&submission='.$submission.'" class="btn btn-warning" onclick="showHide2();">Sync</a></td>
                     ';
                     //wisenet
+
                     echo '<td>'.$data["usrid"].'</td>';
                     echo'</tr>';
                     /*  }else{
@@ -775,23 +781,15 @@ class users{
 
             include "config.php";
             //get everything from normalised table.
-            $query2 = "SELECT * FROM `norm_users_enrol_courses`";
+            $query2 = "SELECT * FROM `norm_users_enrol_courses` ORDER BY norm_users_enrol_courses.id DESC";
             $stmt2 = $pdo->prepare($query2);
             $stmt2->execute();
             $row2   = $stmt2->fetchAll(PDO::FETCH_ASSOC);
             ///var_dump($row2);
-
-
-            //for each record do something
-
-            //$query2 = "SELECT * FROM `of_enrolment` JOIN `user` JOIN `courses` ON of_enrolment.usrid= user.id AND of_enrolment.courseid=courses.id ORDER BY of_enrolment.id DESC";
-            //$stmt2 = $pdo->prepare($query2);
-            ////$stmt2->bindParam('userId', $userId, PDO::PARAM_STR);
-            //$stmt2->execute();
-            //$row2   = $stmt2->fetchAll(PDO::FETCH_ASSOC);
-            //var_dump($row2);
             $i= 1;
-
+            //echo "<pre>";
+            //print_r($row2);
+            //echo "</pre>";
             print_table_header();
             echo '<thead>
                     <tr>
@@ -828,49 +826,30 @@ class users{
                     </tr>
                </tfoot>
                <tbody>';
-//var_dump($row2);
             foreach ($row2 as $data) {
                 //get all user data
-                //$query = "select * from user where `id`=:userId AND role=3";
-                //$stmt = $pdo->prepare($query);
-                //$stmt->bindParam('userId', $data["userid"], PDO::PARAM_STR);
-                //$stmt->execute();
-                //$AllData  = $stmt->fetch(PDO::FETCH_ASSOC);
-                ////get all enrolment data
-                //echo "<pre>";
-                //echo "<b>USER</b>";
-                //print_r($AllData);
-                //echo "</pre>";
-
-                //$query2 = "SELECT * FROM `of_enrolment` where `id`=:enrolId ";
-                //$stmt2 = $pdo->prepare($query2);
-                //$stmt2->bindParam('enrolId', $data["enrolid"], PDO::PARAM_STR);
-                //$stmt2->execute();
-                //$AllData2   = $stmt2->fetchAll(PDO::FETCH_ASSOC);
-                //echo "<pre>";
-                //echo "<b>Enrol</b>";
-                //print_r($AllData2);
-                //echo "</pre>";
-
                 $query12 = "SELECT * FROM `courses`  WHERE `id`=:id";
                 $stmt22 = $pdo->prepare($query12);
                 $stmt22->bindParam('id', $data['courseid'], PDO::PARAM_STR);
                 $stmt22->execute();
                 $newresult2 = $stmt22->fetch();
+                //echo "<pre>";
+                //print_r($newresult2);
+                //echo "</pre>";
+
 
                 //SELECT * FROM `of_enrolment` join user where `of_enrolment`.`id`=41 and user.id=208
-                $query2 = "SELECT * FROM `of_enrolment` join user where `of_enrolment`.`id`=:enrolId and user.id=:userid ";
+                $query2 = "SELECT *, `of_enrolment`.`id` as newid FROM `of_enrolment` join user where `of_enrolment`.`id`=:enrolId and user.id=:userid and user.role=3";
                 $stmt2 = $pdo->prepare($query2);
                 $stmt2->bindParam('enrolId', $data["enrolid"], PDO::PARAM_STR);
                 $stmt2->bindParam('userid', $data["userid"], PDO::PARAM_STR);
                 $stmt2->execute();
-                $data   = $stmt2->fetch();
+                $data   = $stmt2->fetch(PDO::FETCH_ASSOC);
 
 
 
                 //var_dump($newresult2);
                 //echo "<pre>";
-                //echo "HERE is it:"+$data[0]+"<br>";
                 //print_r($data);
                 //echo "</pre>";
 
@@ -879,7 +858,7 @@ class users{
                 //echo $data["course"];
                 $course = getStudentCourse($data["course"]);
                 $check = checkForhunderdPercent($data,$course);
-                if ($check == 0) {
+                if ($check == 0 && !empty($data["uqid"]) && $data["uqid"]!= NULL ) {
                     echo '<tr>';
                     echo '<td ">' . $i . '</td>';
                     echo '<td >' . $data["uqid"] . '</td>';
@@ -917,8 +896,7 @@ class users{
 
                     //  echo $submission;
                     /*    if (get_enrolmentStatus($data["uqid"]) != 1){*/
-                    echo '<td><a href="index.php?page=20&$courseId=' . $data['id'] .
-                            '" target="_blank"></ahref><i class="fa fa-link" style="color:blue;"></i></a>';
+                    echo '<td><a href="index.php?page=20&enrolmentId='.$data["newid"].'&courseid='.$newresult2["id"]. '" target="_blank"></ahref><i class="fa fa-link" style="color:blue;"></i></a>';
                     echo '<a href="index.php?page=14&submission=' . $submission .
                             '" class="btn btn-warning" onclick="showHide2();">Sync</a></td></tr>';
                     /*  }else{
@@ -985,6 +963,7 @@ class users{
                             url: 'thankyou.php',
                             data: {formvalue: val, enrolmentId:id},
                             success: function (data) {
+                                //alert(data);
                                 if (data == "YES") {
                                     //$ele.fadeOut().remove();
                                     //$ele.append('<i class="fab fa-medium-m" style="color:orange;" data-toggle="tooltip" data-placement="top" title=" atha rakh"></i>');
@@ -1010,8 +989,9 @@ class users{
                         var val=$(this).attr('value');
                         var $ele = $(this).parent().parent();
                         var $ele2 = $(this).parent();
+
                        // console.log(id);
-                        //console.log(val);
+                       //  console.log(val);
                         $.ajax({
                             type: 'POST',
                             url: 'thankyou.php',
@@ -1045,32 +1025,50 @@ class users{
         //$courseId= $_GET['$courseId'];
         $api=get_setting_api();
 
+        //get everything from normalised table.
+        //$query2 = "SELECT * FROM `norm_users_enrol_courses` ORDER BY norm_users_enrol_courses.id DESC";
+        //$stmt2 = $pdo->prepare($query2);
+        //$stmt2->execute();
+        //$row2   = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
         $query2 = "SELECT * FROM `of_enrolment` JOIN `user` ON of_enrolment.usrid= user.id where `of_enrolment`.id=:id";
         $stmt2 = $pdo->prepare($query2);
         $stmt2->bindParam('id', $_GET["enrolmentId"], PDO::PARAM_STR);
         $stmt2->execute();
-        $row2   = $stmt2->fetchAll(PDO::FETCH_ASSOC);
-        $std_id = $row2[0]['uqid'];
+        $row2   = $stmt2->fetch(PDO::FETCH_ASSOC);
+        $std_id = $row2['uqid'];
 
-        //   print_r($row2);
+
+        $query12 = "SELECT * FROM `courses`  WHERE `normid`=:id";
+        $stmt22 = $pdo->prepare($query12);
+        $stmt22->bindParam('id', $row2['normid'], PDO::PARAM_STR);
+        $stmt22->execute();
+        $newresult2 = $stmt22->fetch(PDO::FETCH_ASSOC);
+        //print_r($newresult2);
+
         echo '</div><div class="container-fluid">';
         ?>
         <div class="container">
             <div class="main-body">
+                <?php
+                //echo "<pre>";
+                //print_r($row2);
+                //echo "</pre>";
+                ?>
                 <div class="row gutters-sm">
                     <div class="col-md-4 mb-3">
                         <div class="card">
+
                             <div class="card-body">
                                 <div class="d-flex flex-column align-items-center text-center">
                                     <img src="img/avatarProfile.PNG" alt="Admin" class="rounded-circle" width="150">
                                     <div class="mt-3">
-                                        <h4><?php echo $row2[0]['firstname'].' '.$row2[0]['lastname'].' ('.$row2[0]['uqid'].')';?></h4>
-                                        <p class="text-secondary mb-1"><?php echo $row2[0]['email'];?></p>
-                                        <p class="text-secondary mb-1"><?php echo '+61'.$row2[0]['phone'];?></p>
-                                        <p class="text-muted font-size-sm"><?php echo $row2[0]['campus'];?></p>
+                                        <h4><?php echo $row2['firstname'].' '.$row2['lastname'].' ('.$row2['uqid'].')';?></h4>
+                                        <p class="text-secondary mb-1"><?php echo $row2['email'];?></p>
+                                        <p class="text-secondary mb-1"><?php echo '+61'.$row2['phone'];?></p>
+                                        <p class="text-muted font-size-sm"><?php echo $row2['campus'];?></p>
                                         <p><b>Courses:</b></p>
-                                        <p><?php echo $row2[0]['courses'];?></p>
+                                        <p><?php echo $newresult2['course'];?></p>
                                     </div>
                                 </div>
                             </div>
@@ -1104,10 +1102,10 @@ class users{
                              *******************************
                              */
 
-                            $rs = json_decode($row2[0]['enrolForm'],true);
-                            if (isset($row2[0]['enrolForm'])!=NULL && is_array($rs)){
+                            $rs = json_decode($row2['enrolForm'],true);
+                            if (isset($row2['enrolForm'])!=NULL && is_array($rs)){
                                 echo '<br>';
-                                $data = json_decode($row2[0]['enrolForm']);
+                                $data = json_decode($row2['enrolForm']);
                                 $enrolmentSumissionData = json_decode(json_encode($data), true);
                                 echo '<tr>';
                                 echo '<td style="display: none;">' . $i . '</td>';
@@ -1122,7 +1120,7 @@ class users{
                                 }
                                 echo '</tr>';
 
-                            }elseif(isset($row2[0]['enrolForm'])==NULL){
+                            }elseif(isset($row2['enrolForm'])==NULL){
                                 echo '<tr>';
                                 echo '<td style="display: none;">'.$i.'</td>';
                                 echo '<td>Enrolment Agreement Form</td>';
@@ -1142,9 +1140,9 @@ class users{
                              *******************************
                              *******************************
                              */
-                            $rs1 = json_decode($row2[0]['skillForm'],true);
-                            if (isset($row2[0]['skillForm'])!=NULL && is_array($rs1)){
-                                $data = json_decode($row2[0]['skillForm']);
+                            $rs1 = json_decode($row2['skillForm'],true);
+                            if (isset($row2['skillForm'])!=NULL && is_array($rs1)){
+                                $data = json_decode($row2['skillForm']);
                                 $skillFormData = json_decode(json_encode($data), true);
                                 //https://api.jotform.com/pdf-converter/{formId}/fill-pdf?download=1&submissionID={sumissionID}&apikey={apiKey}
                                 echo '<tr>';
@@ -1161,7 +1159,7 @@ class users{
                                 }
 
                                 echo '</tr>';
-                            }elseif(isset($row2[0]['skillForm'])==NULL){
+                            }elseif(isset($row2['skillForm'])==NULL){
                                 echo '<tr>';
                                 echo '<td style="display: none;">'.$i.'</td>';
                                 echo '<td>Skill First Form</td>';
@@ -1180,9 +1178,9 @@ class users{
                              *******************************
                              *******************************
                              */
-                            $rs3 = json_decode($row2[0]['usiForm'],true);
-                            if (isset($row2[0]['usiForm'])!=NULL && is_array($rs3)){
-                                $data = json_decode($row2[0]['usiForm']);
+                            $rs3 = json_decode($row2['usiForm'],true);
+                            if (isset($row2['usiForm'])!=NULL && is_array($rs3)){
+                                $data = json_decode($row2['usiForm']);
                                 $usiFormData = json_decode(json_encode($data), true);
                                 if($usiFormData['formID'] != $usitransForm){
                                     //https://api.jotform.com/pdf-converter/{formId}/fill-pdf?download=1&submissionID={sumissionID}&apikey={apiKey}
@@ -1225,7 +1223,7 @@ class users{
                                     }
                                     echo '</tr>';
                                 }
-                            }elseif(isset($row2[0]['usiForm'])==NULL){
+                            }elseif(isset($row2['usiForm'])==NULL){
                                 echo '<tr>';
                                 echo '<td style="display: none;">'.$i.'</td>';
                                 echo '<td>USI Form/USI Transcript</td>';
@@ -1245,11 +1243,11 @@ class users{
                              *******************************
                              *******************************
                              */
-                            $rs4 = json_decode($row2[0]['llnForm'],true);
-                            if (isset($row2[0]['ptrForm'])!=NULL || isset($row2[0]['llnForm'])!=NULL || isset($row2[0]['ptrForm'])!=1 || isset($row2[0]['ptrForm'])!=1  ){
+                            $rs4 = json_decode($row2['llnForm'],true);
+                            if (isset($row2['ptrForm'])!=NULL || isset($row2['llnForm'])!=NULL || isset($row2['ptrForm'])!=1 || isset($row2['ptrForm'])!=1  ){
                                 if(is_array($rs4)){
                                     echo '<br>';
-                                    $data = json_decode($row2[0]['llnForm']);
+                                    $data = json_decode($row2['llnForm']);
                                     $llnptr = json_decode(json_encode($data), true);
 
                                     echo '<tr>';
@@ -1265,7 +1263,7 @@ class users{
                                         echo '<td>-</td>';
                                     }
                                     echo '</tr>';
-                                }elseif(isset($row2[0]['llnForm'])==NULL){
+                                }elseif(isset($row2['llnForm'])==NULL){
                                     echo '<tr>';
                                     echo '<td style="display: none;">'.$i.'</td>';
                                     echo '<td>LLN & PTR</td>';
@@ -1302,14 +1300,14 @@ class users{
 
                             // Use comparison operator to
                             // compare dates
-                             if (isset($row2[0]['enrolForm'])!=NULL){
+                             if (isset($row2['enrolForm'])!=NULL){
                                 $signup = getSigupTime($userId);
                                 $date1 = "2021-12-09";
                                 /*** Check if there are new enrolment form submissions **/
                                 if ($signup > $date1){
-                                    $data = json_decode($row2[0]['enrolForm']);
+                                    $data = json_decode($row2['enrolForm']);
                                 }else{
-                                    $data = json_decode($row2[0]['documentForm']);
+                                    $data = json_decode($row2['documentForm']);
                                 }
 
                                 $documentFormData = json_decode(json_encode($data), true);
@@ -1346,6 +1344,8 @@ class users{
                                     echo '<td>-</td>';
                                 }
                                 echo '</tr>';
+
+
 
                                 print_table_footer();
                                 ?>

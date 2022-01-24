@@ -40,6 +40,7 @@ if(isset($_POST['email'])){
         $sql = "UPDATE `of_enrolment` SET `enrolForm`= ? , `enrolReview` = 0 WHERE usrid = ?";
         $stmt= $pdo->prepare($sql);
         $result = $stmt->execute([$data,$studentId]);
+
         $sql1 = "UPDATE `of_enrolment` SET `documentForm`= ? , `documentReview` = 0 WHERE usrid = ?";
         $stmt1= $pdo->prepare($sql1);
         $result1= $stmt1->execute([$data,$studentId]);
@@ -105,7 +106,7 @@ if (isset($_POST['formvalue']) && isset($_POST['enrolmentId'])){
     global $pdo;
     if($_POST['formvalue']=='ptrForm'){
         $update=$_SESSION['userid'];
-        $sql = "UPDATE `of_enrolment` SET `ptrForm`= ? , `ptrReview` = 0 WHERE courseid = ?";
+        $sql = "UPDATE `of_enrolment` SET `ptrForm`= ? , `ptrReview` = 0 WHERE id = ?";
         $stmt= $pdo->prepare($sql);
         $result = $stmt->execute([$update,$_POST['enrolmentId']]);
         if(isset($result)) {
@@ -117,7 +118,7 @@ if (isset($_POST['formvalue']) && isset($_POST['enrolmentId'])){
     }elseif($_POST['formvalue']=='llnForm'){
         session_start();
         $update=$_SESSION['userid'];
-        $sql1 = "UPDATE `of_enrolment` SET `llnForm`= ? , `llnReview` = 0 WHERE courseid = ?";
+        $sql1 = "UPDATE `of_enrolment` SET `llnForm`= ? , `llnReview` = 0 WHERE id = ?";
         $stmt1= $pdo->prepare($sql1);
         $result1 = $stmt1->execute([$update,$_POST['enrolmentId']]);
         if(isset($result1)) {
@@ -128,9 +129,10 @@ if (isset($_POST['formvalue']) && isset($_POST['enrolmentId'])){
         }
     }elseif($_POST['formvalue']=='enrolForm'){
         session_start();
+        //var_dump($_POST['enrolmentId']);
         $update=$_SESSION['userid'];
-        //echo $update. ' '.$_POST['userId'];
-        $sql1 = "UPDATE `of_enrolment` SET `enrolForm`= ? , `enrolReview` = 0 WHERE courseid = ?";
+        //echo 'asd '.$_POST['enrolmentId'];
+        $sql1 = "UPDATE `of_enrolment` SET `enrolForm`= ? , `enrolReview` = 0 WHERE id = ?";
         $stmt1= $pdo->prepare($sql1);
         $result1 = $stmt1->execute([$update,$_POST['enrolmentId']]);
         if(isset($result1)) {
@@ -142,7 +144,7 @@ if (isset($_POST['formvalue']) && isset($_POST['enrolmentId'])){
     }elseif($_POST['formvalue']=='documentForm'){
         session_start();
         $update=$_SESSION['userid'];
-        $sql1 = "UPDATE `of_enrolment` SET `documentForm`= ? WHERE courseid = ?";
+        $sql1 = "UPDATE `of_enrolment` SET `documentForm`= ? WHERE id = ?";
         $stmt1= $pdo->prepare($sql1);
         $result1 = $stmt1->execute([$update,$_POST['enrolmentId']]);
         if(isset($result1)) {
@@ -154,7 +156,7 @@ if (isset($_POST['formvalue']) && isset($_POST['enrolmentId'])){
     }elseif($_POST['formvalue']=='usiForm'){
         session_start();
         $update=$_SESSION['userid'];
-        $sql1 = "UPDATE `of_enrolment` SET `usiForm`= ? , `usiReview` = 0 WHERE courseid = ?";
+        $sql1 = "UPDATE `of_enrolment` SET `usiForm`= ? , `usiReview` = 0 WHERE id = ?";
         $stmt1= $pdo->prepare($sql1);
         $result1 = $stmt1->execute([$update,$_POST['enrolmentId']]);
         if(isset($result1)) {
@@ -166,7 +168,7 @@ if (isset($_POST['formvalue']) && isset($_POST['enrolmentId'])){
     }elseif($_POST['formvalue']=='skillForm'){
         session_start();
         $update=$_SESSION['userid'];
-        $sql1 = "UPDATE `of_enrolment` SET `skillForm`= ? , `skillReview` = 0 WHERE courseid = ?";
+        $sql1 = "UPDATE `of_enrolment` SET `skillForm`= ? , `skillReview` = 0 WHERE id = ?";
         $stmt1= $pdo->prepare($sql1);
         $result1 = $stmt1->execute([$update,$_POST['enrolmentId']]);
         if(isset($result1)) {
@@ -182,7 +184,7 @@ if (isset($_POST['formvalue']) && isset($_POST['enrolmentId'])){
         $myObj->userid = $_SESSION['userid'];
         $myObj->time = date("l d/m/Y h:i:sa");
         $update = json_encode($myObj);
-        $sql1 = "UPDATE `of_enrolment` SET `enrolReview`= ? WHERE courseid = ?";
+        $sql1 = "UPDATE `of_enrolment` SET `enrolReview`= ? WHERE id = ?";
         $stmt1= $pdo->prepare($sql1);
         $result1 = $stmt1->execute([$update,$_POST['enrolmentId']]);
         if(isset($result1)) {
@@ -198,7 +200,7 @@ if (isset($_POST['formvalue']) && isset($_POST['enrolmentId'])){
         $myObj->userid = $_SESSION['userid'];
         $myObj->time = date("l d/m/Y h:i:sa");
         $update = json_encode($myObj);
-        $sql1 = "UPDATE `of_enrolment` SET `documentReview`= ? WHERE courseid = ?";
+        $sql1 = "UPDATE `of_enrolment` SET `documentReview`= ? WHERE id = ?";
         $stmt1= $pdo->prepare($sql1);
         $result1 = $stmt1->execute([$update,$_POST['enrolmentId']]);
         if(isset($result1)) {
@@ -214,7 +216,7 @@ if (isset($_POST['formvalue']) && isset($_POST['enrolmentId'])){
         $myObj->userid = $_SESSION['userid'];
         $myObj->time = date("l d/m/Y h:i:sa");
         $update = json_encode($myObj);
-        $sql1 = "UPDATE `of_enrolment` SET `usiReview`= ? WHERE courseid = ?";
+        $sql1 = "UPDATE `of_enrolment` SET `usiReview`= ? WHERE id = ?";
         $stmt1= $pdo->prepare($sql1);
         $result1 = $stmt1->execute([$update,$_POST['enrolmentId']]);
         if(isset($result1)) {
@@ -230,7 +232,7 @@ if (isset($_POST['formvalue']) && isset($_POST['enrolmentId'])){
         $myObj->userid = $_SESSION['userid'];
         $myObj->time = date("l d/m/Y h:i:sa");
         $update = json_encode($myObj);
-        $sql1 = "UPDATE `of_enrolment` SET `llnReview`= ? WHERE courseid = ?";
+        $sql1 = "UPDATE `of_enrolment` SET `llnReview`= ? WHERE id = ?";
         $stmt1= $pdo->prepare($sql1);
         $result1 = $stmt1->execute([$update,$_POST['enrolmentId']]);
         if(isset($result1)) {
@@ -246,7 +248,7 @@ if (isset($_POST['formvalue']) && isset($_POST['enrolmentId'])){
         $myObj->userid = $_SESSION['userid'];
         $myObj->time = date("l d/m/Y h:i:sa");
         $update = json_encode($myObj);
-        $sql1 = "UPDATE `of_enrolment` SET `skillReview`= ? WHERE courseid = ?";
+        $sql1 = "UPDATE `of_enrolment` SET `skillReview`= ? WHERE id = ?";
         $stmt1= $pdo->prepare($sql1);
         $result1 = $stmt1->execute([$update,$_POST['enrolmentId']]);
         if(isset($result1)) {
@@ -262,7 +264,7 @@ if (isset($_POST['formvalue']) && isset($_POST['enrolmentId'])){
         $myObj->userid = $_SESSION['userid'];
         $myObj->time = date("l d/m/Y h:i:sa");
         $update = json_encode($myObj);
-        $sql1 = "UPDATE `of_enrolment` SET `ptrReview`= ? WHERE courseid = ?";
+        $sql1 = "UPDATE `of_enrolment` SET `ptrReview`= ? WHERE id = ?";
         $stmt1= $pdo->prepare($sql1);
         $result1 = $stmt1->execute([$update,$_POST['enrolmentId']]);
         if(isset($result1)) {

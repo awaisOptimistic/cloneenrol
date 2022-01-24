@@ -117,15 +117,7 @@ global $url;
                             <a class="dropdown-item" href="index.php?page=27">100% Enrolments</a>
                         </div>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.php?page=19">
-                    <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from https://tabler-icons.io/i/home -->
-                        <!-- Download SVG icon from https://tabler-icons.io/i/chart-bar -->
-	<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><rect x="3" y="12" width="6" height="8" rx="1" /><rect x="9" y="8" width="6" height="12" rx="1" /><rect x="15" y="4" width="6" height="16" rx="1" /><line x1="4" y1="20" x2="18" y2="20" /></svg>
-                    </span>
-                            <span class="nav-link-title">Students Progress Check</span>
-                        </a>
-                    </li>
+
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="#navbar-extra" data-bs-toggle="dropdown" role="button" aria-expanded="false" >
                     <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from https://tabler-icons.io/i/checkbox -->
